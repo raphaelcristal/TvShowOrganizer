@@ -14,19 +14,6 @@ import static play.libs.Json.toJson;
 
 public class Episodes extends Controller {
 
-    private static Episode findEpisodeByNumber(List<Episode> episodes, int number) {
-
-        for (Episode episode : episodes) {
-
-            if (episode.getNumber() == number) {
-                return episode;
-            }
-
-        }
-        return null;
-
-    }
-
     public static Result getEpisode(Long showId, int seasonNumber, int episodeNumber) {
 
         Logger.debug("Get episode number " + episodeNumber + " of season number " + seasonNumber + " of show " + showId + "");
