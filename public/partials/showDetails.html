@@ -1,0 +1,61 @@
+<div class="pure-u-1 container">
+<a class="pure-button pure-button-primary pull-right pure-button-xsmall" href="#/organize" style="margin:0.9em 1.6em 0 0">Back</a>
+<button class="pure-button pure-button-success pull-right pure-button-xsmall" style="margin:0.9em 1.6em 0 0" data-ng-click="subscribe(show.id); $event.stopPropagation();" data-ng-hide="isSubscribed(show.id)">Subscribe</button>
+<button class="pure-button pure-button-error pull-right pure-button-xsmall" data-ng-click="unSubscribe(show.id); $event.stopPropagation();" style="margin:0.9em 1.6em 0 0" data-ng-show="isSubscribed(show.id)">Remove</button>
+    <h1>{{show.title}}</h1>
+    <div class="contentMargin">
+        <table>
+            <tr>
+                <td width="130" valign="top" align="right" style="padding: 0.5em 1.0em">
+                    <button class="pure-message pure-button-primary pure-button-xsmall">Description</button>
+                </td>
+                <td style="padding: 0.4em 0">
+                    <span>
+                        {{show.description || 'No description available.'}}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" align="right" style="padding: 0.5em 1.0em">
+                    <button class="pure-message pure-button-primary pure-button-xsmall">Network</button>
+                </td>
+                <td>
+                    <a class="link" href="#/networks/{{show.network.id}}">{{show.network.name}}</a>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" align="right" style="padding: 0.5em 1.0em">
+                    <button class="pure-message pure-button-primary pure-button-xsmall">Airtime</button>
+                </td>
+                <td>
+                    {{show.airday}} - {{show.airtime}}
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" align="right" style="padding: 0.5em 1.0em">
+                    <button class="pure-message pure-button-primary pure-button-xsmall">Actors</button>
+                </td>
+                <td>
+                    <a class="link actors" href="#/actors/{{actor.id}}" data-ng-repeat="actor in show.actors">{{actor.name}}</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h1>Seasons</h1>
+    <div class="contentMargin">
+        <div class="episode" data-ng-repeat="season in show.seasons">
+            <button class="pure-message pure-button-primary pull-right pure-button-xsmall" style="margin-top: 0.3em">{{season.episodes.length}} Episodes</button>
+            <h2 class="clickable" data-ng-click="toggle($index)" style="border:0!important">Season {{$index+1}}</h2>
+            <div data-ng-show="visible[$index]">
+                <div class="contentMargin">
+                    <div class="episodeDetail" data-ng-repeat="episode in season.episodes">
+                        <h4 class="pull-right">{{episode.airtime | fromTimestamp}}</h4>
+                        <h4>Episode {{episode.number}} - "{{episode.title}}""</h4>
+                        <p>{{episode.description}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

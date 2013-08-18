@@ -1,0 +1,33 @@
+<div class="pure-u-1 hero-unit">
+    <table>
+        <tr>
+            <td width="300">
+                <img class="pull-left" width="280" height="280" src="assets/images/hero-icon.png"/>
+            </td>
+            <td>
+                <h1 class="hero-unit-head">Organize Your TV Shows</h1>
+                <h2 class="hero-unit-subhead">
+                    Never miss an episode of your favorite tv show! Tv Show Organizer allows you to subscribe to the shows you are watching and presents you a dashboard with the latest episodes so you are always up to date! To get started just fill the following sign up form!
+                </h2>
+                <h4 class="error">{{error}}</h4>
+                <form id="registration-form" class="pure-form" data-ng-hide="isLoggedIn()" data-ng-submit="signUp(user.email, user.password)">
+                     <input style="font-size:130%;width:13em;" id="sign-up-email" type="email" placeholder="Email" data-ng-model="user.email" required>
+                     <input style="font-size:130%;width:13em;" id="sign-up-password" type="password" placeholder="Password" data-ng-model="user.password" required>
+                    <button type="submit" id="sign-up-button" class="pure-button pure-button-primary">Sign up</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="pure-u-2-5" style="padding:0 2.0em 0 4.0em;">
+    <h1 style="padding-left:0;">Your personal dashboard</h1>
+    <p>
+        After subscribing to your the shows which you want to watch you regularly, the dashboard lists the latest and upcoming episodes with the information where and when to watch them. The dashboard shows also a short description of the episode if available, which is useful if you don't remember if you already watched an episode or not.
+    </p>
+</div>
+<div class="pure-u-2-5" style="padding:0 2.0em 0 4.0em;">
+    <h1 style="padding-left:0;">Find new TV shows</h1>
+    <p>
+        TvShowOrganizer helps you explore new shows. You can search for a show and list information for a show, like actors, network and an overview of every season and its episodes. You can also list shows for specific actors or networks.
+    </p>
+</div>

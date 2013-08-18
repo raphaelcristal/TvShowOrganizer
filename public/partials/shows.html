@@ -1,0 +1,23 @@
+<div id="subscribed-shows" class="pure-u-1 container">
+    <h1>Search Shows</h1>
+    <div class="contentMargin">
+        
+        <form class="pure-form search-form">
+            <div class="input-append">
+                <input type="text" ng-model="showName" class="pure-input-rounded pure-u-1-3">
+                <button type="submit" class="pure-button pure-button-primary pure-button-small" ng-click="searchShowsByName(showName)">Search</button>
+            </div>
+        </form>
+
+        <div data-ng-show="info">
+            <h2>{{info}}</h2>
+        </div>
+        <div class="episode clickable" data-ng-click="showDetails(show.id)" data-ng-repeat="show in searchedShows">
+            <button class="pure-button pure-button-success pull-right pure-button-xsmall" data-ng-click="subscribe(show.id); $event.stopPropagation();" data-ng-hide="isSubscribed(show.id)">Subscribe</button>
+            <h2>{{ show.title }}</h2>
+            <p>
+                {{show.description || 'No description available.'}}
+            </p>
+        </div>
+    </div>
+</div>

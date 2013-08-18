@@ -1,0 +1,32 @@
+<div class="container pure-u-1" id="profile">
+    <h1>Your Profile</h1>
+    <div class="contentMargin">
+        <form class="pure-form pure-form-aligned" data-ng-submit="updateProfile(oldPassword, newPassword, newPasswordRepeated)">
+            <fieldset>
+                <div class="pure-control-group">
+                    <label for="email">Email</label>
+                    <input id="email" class="pure-u-1-4" type="email" placeholder="{{user.email}}" disabled>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="old-password">Old Password</label>
+                    <input id="old-password" class="pure-u-1-4" type="password" placeholder="Old Password" data-ng-model="oldPassword" required>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="new-password">New Password</label>
+                    <input id="new-password" class="pure-u-1-4" type="password" placeholder="New Password" data-ng-model="newPassword" required>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="repeat-password">Repeat Password</label>
+                    <input id="repeat-password" class="pure-u-1-4" type="password" placeholder="Repeat Password" data-ng-model="newPasswordRepeated" required>
+                </div>
+
+                <div class="pure-controls">
+                    <button type="submit" class="pure-button pure-button-success">Change</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

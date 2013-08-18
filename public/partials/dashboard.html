@@ -1,0 +1,20 @@
+<div id="latest-episodes" class="pure-u-1 container">
+
+	<h1>Your Dashboard</h1>
+
+	<div class="contentMargin">
+	    <div class="episode" ng-repeat="episode in latestEpisodes()">
+	    		<button class="pure-message pure-button-primary pull-right pure-button-xsmall">{{episode.airtime | fromTimestamp}} on {{episode.network}} at {{episode.airhour}}</button>
+	            <h2>{{episode.show}} - {{episode.title }} - {{episode.number}}</h2>
+                <p>
+                    {{episode.description || 'No description available.'}}
+                </p>
+	    </div>
+        <div data-ng-hide="userShows()">
+            <p>
+                You are not subscribed to any shows. This page will show the latest episodes for each show you are subscribed to. Just click the button below and get started!
+            </p>
+            <a class="pure-button pure-button-success" href="#/shows">Subscribe To A Show</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<div id="subscribed-shows" class="pure-u-1 container">
+    <h1>{{networkName}}</h1>
+    <div id="searched-shows" class="contentMargin">
+    	<div class="show clickable" data-ng-repeat="show in shows" data-ng-click="showDetails(show.id)">
+            <h2>{{show.title}}</h2>
+            <p>
+                {{show.description || 'No description available.'}}
+            </p>
+        </div>
+    </div>
+</div>
