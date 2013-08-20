@@ -21,6 +21,7 @@ public class TestData {
             List<Season> seasons = new ArrayList<>();
 
             Season season = new Season();
+            season.setNumber(1);
 
             List<Episode> episodes = new ArrayList<>();
 
@@ -56,6 +57,7 @@ public class TestData {
             seasons.add(season);
 
             season = new Season();
+            season.setNumber(2);
 
             episodes = new ArrayList<>();
 
@@ -104,6 +106,7 @@ public class TestData {
             seasons = new ArrayList<>();
 
             season = new Season();
+            season.setNumber(1);
 
             episodes = new ArrayList<>();
 
@@ -181,6 +184,7 @@ public class TestData {
             seasons = new ArrayList<>();
 
             season = new Season();
+            season.setNumber(1);
 
             episodes = new ArrayList<>();
 
@@ -216,6 +220,7 @@ public class TestData {
             seasons.add(season);
 
             season = new Season();
+            season.setNumber(2);
 
             episodes = new ArrayList<>();
 

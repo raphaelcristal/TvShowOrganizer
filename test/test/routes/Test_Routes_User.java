@@ -293,7 +293,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.authenticateUser("dagobert@duck.com", "wrong"));
 
-                assertThat(status(result)).isEqualTo(FORBIDDEN);
+                assertThat(status(result)).isEqualTo(UNAUTHORIZED);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -315,7 +315,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.updatePassword(1L, "wrong", "newpassword"));
 
-                assertThat(status(result)).isEqualTo(FORBIDDEN);
+                assertThat(status(result)).isEqualTo(UNAUTHORIZED);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
