@@ -22,6 +22,7 @@ public class Seasons extends Controller {
 
     }
 
+    //FIXME index is no longer used for season, use seasons.number instead
     public static Result getSeasonForShow(Long showId, int seasonNumber) {
 
         Logger.debug("Get season with number " + seasonNumber + " for show with ID " + showId + "");

@@ -1,9 +1,6 @@
 package dataload;
 
-import com.avaje.ebean.Ebean;
-import models.Episode;
-import models.Season;
-import models.Show;
+import models.*;
 import org.xml.sax.SAXException;
 import play.Logger;
 
@@ -65,18 +62,117 @@ public abstract class AbstractDataLoad {
      */
     abstract List<Show> loadShows() throws IOException, ParseException, ParserConfigurationException, SAXException;
 
-    public void saveShows() throws IOException, ParseException, ParserConfigurationException, SAXException {
+    private Episode findEpisode(List<Episode> episodes, int number) {
+        for(Episode episode : episodes) {
+            if(episode.getNumber() == number) return episode;
+        }
+        return null;
+    }
+
+    private Season findSeason(List<Season> seasons, int number) {
+        for(Season season : seasons) {
+            if(season.getNumber() == number) return season;
+        }
+        return null;
+    }
+
+    private boolean containsActor(Set<Actor> actors, Actor actor) {
+        for(Actor actorFromSet : actors) {
+            if(actorFromSet.getName().equals(actor.getName())) return true;
+        }
+        return false;
+    }
+
+    private Set<Actor> createOrLoadActors(Set<Actor> actors) {
+
+        Set<Actor> newActors = new HashSet<>();
+
+        for (Actor actor : actors) {
+            Actor savedActor = Actor.find.where().eq("name", actor.getName()).findUnique();
+            if (savedActor == null) {
+                actor.save();
+                newActors.add(actor);
+            } else {
+                newActors.add(savedActor);
+            }
+        }
+
+        return newActors;
+    }
+
+    private Network createOrLoadNetwork(Network network) {
+        Network savedNetwork = Network.find.where().eq("name", network.getName()).findUnique();
+        if (savedNetwork == null) {
+            network.save();
+            return network;
+        }
+        return savedNetwork;
+    }
+
+    private void updateShow(Show savedShow, Show newShow) {
+
+        for(Actor newActor : createOrLoadActors(newShow.getActors())) {
+            if(!containsActor(savedShow.getActors(), newActor)) {
+                savedShow.getActors().add(newActor);
+            }
+        }
+        if(savedShow.getAirday() == null) savedShow.setAirday(newShow.getAirday());
+        if(savedShow.getAirtime() == null) savedShow.setAirtime(newShow.getAirtime());
+        if(savedShow.getDescription() == null) savedShow.setDescription(newShow.getDescription());
+        if(savedShow.getTvdbId() == null) savedShow.setTvdbId(newShow.getTvdbId());
+        if(savedShow.getNetwork() == null && newShow.getNetwork() != null) {
+            savedShow.setNetwork(createOrLoadNetwork(newShow.getNetwork()));
+        }
+        for(Season season : newShow.getSeasons()) {
+            Season savedSeason = findSeason(savedShow.getSeasons(), season.getNumber());
+            if(savedSeason == null) {
+                savedShow.getSeasons().add(season);
+            } else {
+                for(Episode episode : season.getEpisodes()) {
+                    Episode savedEpisode = findEpisode(savedSeason.getEpisodes(), episode.getNumber());
+                    if(savedEpisode == null) {
+                        savedSeason.getEpisodes().add(episode);
+                    } else {
+                        if(savedEpisode.getAirtime() == null) savedEpisode.setAirtime(episode.getAirtime());
+                        if(savedEpisode.getDescription() == null) savedEpisode.setDescription(episode.getDescription());
+                        if(savedEpisode.getTitle() == null) savedEpisode.setTitle(episode.getTitle());
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    public void saveShows() throws ParserConfigurationException, SAXException, ParseException, IOException {
 
         List<Show> shows = loadShows();
 
         for (Show show : shows) {
 
-            Logger.info("Saving show: " + show.getTitle());
-            try {
-                show.save();
-            } catch (Exception e) {
-                Logger.error("Could not save show: " + show.getTitle());
-                Logger.error(e.toString());
+            Show savedShow = Show.find.where().eq("title", show.getTitle()).findUnique();
+
+            if(savedShow != null) {
+                updateShow(savedShow, show);
+                Logger.info("Updating show: " + savedShow.getTitle());
+                try {
+                    savedShow.save();
+                } catch (Exception e) {
+                    Logger.error("Could not update show: " + savedShow.getTitle());
+                    Logger.error(e.toString());
+                }
+            } else {
+                try {
+                    Logger.info("Saving show: " + show.getTitle());
+                    show.setActors(createOrLoadActors(show.getActors()));
+                    if(show.getNetwork() != null) {
+                        show.setNetwork(createOrLoadNetwork(show.getNetwork()));
+                    }
+                    show.save();
+                } catch (Exception e) {
+                    Logger.error("Could not save show: " + show.getTitle());
+                    Logger.error(e.toString());
+               }
             }
         }
 

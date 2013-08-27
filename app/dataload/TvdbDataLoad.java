@@ -1,6 +1,5 @@
 package dataload;
 
-import com.avaje.ebean.Ebean;
 import models.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,7 +20,6 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -180,46 +178,21 @@ public class TvdbDataLoad extends AbstractDataLoad {
             show.setAirday(airday);
             show.setAirtime(airtime);
 
-            String networkName = series.getElementsByTagName("Network").item(0).getTextContent();
-            if (networkName.length() > 0) {
-                try {
-                    Network existingNetwork = Network.find.where().eq("name", networkName).findUnique();
-                    if (existingNetwork == null) {
-                        Network network = new Network();
-                        network.setName(networkName);
-                        network.save();
-                        show.setNetwork(network);
-                    } else {
-                        show.setNetwork(existingNetwork);
-                    }
-                } catch (Exception e) {
-                }
-
+            String networkName = series.getElementsByTagName("Network").item(0).getTextContent().trim();
+            if (!networkName.isEmpty()) {
+                Network network = new Network();
+                network.setName(networkName);
+                show.setNetwork(network);
             }
 
             String[] actors = series.getElementsByTagName("Actors").item(0).getTextContent().split("\\|");
             for (String actorName : actors) {
                 actorName = actorName.trim();
-                if (actorName.isEmpty()) {
-                    continue;
-                }
-                Actor existingActor;
-                try {
-                    existingActor = Actor.find.where().eq("name", actorName).findUnique();
-                } catch (Exception e) {
-                    continue;
-                }
-
-                if (existingActor == null) {
+                if (!actorName.isEmpty()) {
                     Actor actor = new Actor();
                     actor.setName(actorName);
-                    actor.save();
                     show.getActors().add(actor);
-
-                } else {
-                    show.getActors().add(existingActor);
                 }
-
             }
 
             //save episode details
@@ -238,8 +211,6 @@ public class TvdbDataLoad extends AbstractDataLoad {
                 String episodeName = episodeElement.getElementsByTagName("EpisodeName").item(0).getTextContent();
                 String airTime = episodeElement.getElementsByTagName("FirstAired").item(0).getTextContent();
 
-
-                //@TODO fetch date from imdb data if missing in tvdb data
                 Date airTimeParsed;
                 try {
                     airTimeParsed = new SimpleDateFormat("yyyy-MM-dd").parse(airTime);
@@ -256,12 +227,6 @@ public class TvdbDataLoad extends AbstractDataLoad {
 
                 seasons.get(seasonNumber).put(episodeNumber, episode);
 
-            }
-
-            if (show.getSeasons() != null) {
-                for (Season season : show.getSeasons()) {
-                    season.delete();
-                }
             }
 
             addSeasonsToShow(show, seasons);
