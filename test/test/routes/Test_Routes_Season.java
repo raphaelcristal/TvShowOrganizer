@@ -80,28 +80,6 @@ public class Test_Routes_Season {
     }
 
     @Test
-    public void getSeasonForMissingShow() {
-
-        running(fakeApplication(inMemoryDatabase()), new Runnable() {
-
-            public void run() {
-
-                TestData.insertData();
-
-                Result result = routeAndCall(fakeRequest(GET, "/shows/100/seasons/1"));
-                assertThat(status(result)).isEqualTo(OK);
-
-                JsonNode json = Json.parse(contentAsString(result));
-
-                assertThat(json.get("error").asText()).isEqualTo("Show does not exist.");
-
-
-            }
-        });
-
-    }
-
-    @Test
     public void getMissingSeasonForExistingShow() {
 
         running(fakeApplication(inMemoryDatabase()), new Runnable() {

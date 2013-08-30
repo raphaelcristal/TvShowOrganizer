@@ -22,21 +22,13 @@ public class Seasons extends Controller {
 
     }
 
-    //FIXME index is no longer used for season, use seasons.number instead
     public static Result getSeasonForShow(Long showId, int seasonNumber) {
 
         Logger.debug("Get season with number " + seasonNumber + " for show with ID " + showId + "");
 
-        Show show = Show.find.byId(showId);
+        Season season = Season.find.where().eq("show_id", showId).eq("number", seasonNumber).findUnique();
 
-        if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
-        }
-
-        Season season;
-        try {
-            season = show.getSeasons().get(seasonNumber - 1);
-        } catch (IndexOutOfBoundsException e) {
+        if (season == null) {
             return ok(JsonErrorMessage("Season does not exist."));
         }
 
