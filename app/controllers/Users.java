@@ -64,7 +64,7 @@ public class Users extends Controller {
         authToken.setCreationDate(new Date());
         authToken.setToken(generateToken());
 
-        user.getAuthTokens().add(authToken);
+        user.setAuthToken(authToken);
 
         try {
 
@@ -97,11 +97,11 @@ public class Users extends Controller {
             return unauthorized(JsonErrorMessage("Wrong password."));
         }
 
-        AuthToken authToken = new AuthToken();
-        authToken.setToken(generateToken());
-        authToken.setCreationDate(new Date());
-        user.getAuthTokens().add(authToken);
-        user.save();
+        AuthToken authToken = user.getAuthToken();
+
+        if (!authToken.isActive()) {
+            return unauthorized(JsonErrorMessage("Your token has been revoked."));
+        }
 
         session("token", authToken.getToken());
 
@@ -110,7 +110,7 @@ public class Users extends Controller {
         objectNode.put("token", authToken.getToken());
         objectNode.putAll((ObjectNode) toJson(user));
 
-        return created(toJson(objectNode));
+        return ok(toJson(objectNode));
 
     }
 

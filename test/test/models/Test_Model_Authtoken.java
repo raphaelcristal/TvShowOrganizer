@@ -30,7 +30,7 @@ public class Test_Model_Authtoken {
 
                 User user = createUser();
                 AuthToken authToken = new AuthToken();
-                user.getAuthTokens().add(authToken);
+                user.setAuthToken(authToken);
 
                 try {
                     user.save();
@@ -52,7 +52,7 @@ public class Test_Model_Authtoken {
 
                 AuthToken authToken = new AuthToken();
                 authToken.setToken("faketoken");
-                user.getAuthTokens().add(authToken);
+                user.setAuthToken(authToken);
                 user.save();
 
                 Date date = new Date();

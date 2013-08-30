@@ -6,6 +6,8 @@ import play.Logger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static controllers.Security.generateToken;
+
 public class TestData {
 
     public static void insertData() {
@@ -303,6 +305,11 @@ public class TestData {
             shows.add(showSaberRider);
 
             user.setShows(shows);
+
+            AuthToken authToken = new AuthToken();
+            authToken.setToken(generateToken());
+            user.setAuthToken(authToken);
+
             user.save();
 
 
@@ -317,6 +324,11 @@ public class TestData {
             shows.add(showDarkwingDuck);
 
             user.setShows(shows);
+
+            authToken = new AuthToken();
+            authToken.setToken(generateToken());
+            user.setAuthToken(authToken);
+
             user.save();
 
             // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -324,6 +336,10 @@ public class TestData {
             user = new User();
             user.setEmail("userwithout@shows.com");
             user.setPassword("userwithoutshows");
+
+            authToken = new AuthToken();
+            authToken.setToken(generateToken());
+            user.setAuthToken(authToken);
 
             user.save();
 

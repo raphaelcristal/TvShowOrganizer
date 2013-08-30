@@ -29,6 +29,9 @@ public class AuthToken extends Model {
     @Formats.DateTime(pattern = "dd/MM/yyyy")
     private Date creationDate;
 
+    @Constraints.Required
+    private boolean active = true;
+
 
     public Long getId() {
         return id;
@@ -52,6 +55,14 @@ public class AuthToken extends Model {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
 

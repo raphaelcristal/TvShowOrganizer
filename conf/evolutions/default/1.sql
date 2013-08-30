@@ -12,8 +12,8 @@ create table actors (
 
 create table authTokens (
   id                        bigint auto_increment not null,
-  user_id                   bigint not null,
   token                     varchar(255),
+  active                    tinyint(1) default 0,
   creation_date             datetime not null,
   constraint uq_authTokens_token unique (token),
   constraint pk_authTokens primary key (id))
@@ -63,6 +63,7 @@ create table users (
   id                        bigint auto_increment not null,
   email                     varchar(120),
   password                  varchar(255),
+  auth_token_id             bigint,
   constraint uq_users_email unique (email),
   constraint pk_users primary key (id))
 ;
@@ -79,14 +80,14 @@ create table users_shows (
   shows_id                       bigint not null,
   constraint pk_users_shows primary key (users_id, shows_id))
 ;
-alter table authTokens add constraint fk_authTokens_users_1 foreign key (user_id) references users (id) on delete restrict on update restrict;
-create index ix_authTokens_users_1 on authTokens (user_id);
-alter table episodes add constraint fk_episodes_seasons_2 foreign key (season_id) references seasons (id) on delete restrict on update restrict;
-create index ix_episodes_seasons_2 on episodes (season_id);
-alter table seasons add constraint fk_seasons_shows_3 foreign key (show_id) references shows (id) on delete restrict on update restrict;
-create index ix_seasons_shows_3 on seasons (show_id);
-alter table shows add constraint fk_shows_network_4 foreign key (network_id) references networks (id) on delete restrict on update restrict;
-create index ix_shows_network_4 on shows (network_id);
+alter table episodes add constraint fk_episodes_seasons_1 foreign key (season_id) references seasons (id) on delete restrict on update restrict;
+create index ix_episodes_seasons_1 on episodes (season_id);
+alter table seasons add constraint fk_seasons_shows_2 foreign key (show_id) references shows (id) on delete restrict on update restrict;
+create index ix_seasons_shows_2 on seasons (show_id);
+alter table shows add constraint fk_shows_network_3 foreign key (network_id) references networks (id) on delete restrict on update restrict;
+create index ix_shows_network_3 on shows (network_id);
+alter table users add constraint fk_users_authToken_4 foreign key (auth_token_id) references authTokens (id) on delete restrict on update restrict;
+create index ix_users_authToken_4 on users (auth_token_id);
 
 
 

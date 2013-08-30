@@ -6,7 +6,6 @@ import models.User;
 import org.codehaus.jackson.JsonNode;
 import org.junit.Test;
 import org.mindrot.jbcrypt.BCrypt;
-import play.Logger;
 import play.libs.Json;
 import play.mvc.Result;
 import test.data.TestData;
@@ -27,7 +26,7 @@ public class Test_Routes_User {
         authToken.setCreationDate(new Date());
         authToken.setToken(generateToken());
 
-        user.getAuthTokens().add(authToken);
+        user.setAuthToken(authToken);
         user.save();
 
         return user;
@@ -45,7 +44,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
-                AuthToken authToken = user.getAuthTokens().get(0);
+                AuthToken authToken = user.getAuthToken();
 
                 Result result = routeAndCall(fakeRequest(GET, "/users/1/shows").withSession("token", authToken.getToken()));
                 assertThat(status(result)).isEqualTo(OK);
@@ -113,7 +112,7 @@ public class Test_Routes_User {
                 TestData.insertData();
                 User user = User.find.byId(3L);
                 user = getAuthenticatedUser(user);
-                AuthToken authToken = user.getAuthTokens().get(0);
+                AuthToken authToken = user.getAuthToken();
 
                 Result result = routeAndCall(fakeRequest(GET, "/users/3/shows").withSession("token", authToken.getToken()));
                 assertThat(status(result)).isEqualTo(OK);
@@ -249,9 +248,9 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.authenticateUser(user.getEmail(), "Geldspeicher"));
 
-                assertThat(status(result)).isEqualTo(CREATED);
+                assertThat(status(result)).isEqualTo(OK);
 
-                AuthToken savedToken = user.getAuthTokens().get(0);
+                AuthToken savedToken = user.getAuthToken();
                 JsonNode json = Json.parse(contentAsString(result));
 
                 assertThat(json.get("token").asText()).isEqualTo(savedToken.getToken());
@@ -404,7 +403,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
-                AuthToken token = user.getAuthTokens().get(0);
+                AuthToken token = user.getAuthToken();
 
                 Result result = callAction(
                         controllers.routes.ref.Users.subscribeUserToShow(1L, 100L),
@@ -439,6 +438,56 @@ public class Test_Routes_User {
                         fakeRequest().withSession("token", "fakeToken")
                 );
 
+                assertThat(status(result)).isEqualTo(UNAUTHORIZED);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("error").asText()).isEqualTo("Not authorized.");
+
+            }
+        });
+
+    }
+
+    @Test
+    public void authenticateDeactivatedUser() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                TestData.insertData();
+                User user = User.find.byId(1L);
+                user.getAuthToken().setActive(false);
+                user.save();
+
+                Result result = callAction(controllers.routes.ref.Users.authenticateUser(user.getEmail(), "Geldspeicher"));
+
+                assertThat(status(result)).isEqualTo(UNAUTHORIZED);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("error").asText()).isEqualTo("Your token has been revoked.");
+
+            }
+        });
+
+    }
+
+    @Test
+    public void getShowsForDeactivatedUser() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                TestData.insertData();
+
+                User user = User.find.byId(1L);
+                user.getAuthToken().setActive(false);
+                user.save();
+
+                Result result = routeAndCall(fakeRequest(GET, "/users/1/shows"));
                 assertThat(status(result)).isEqualTo(UNAUTHORIZED);
 
                 JsonNode json = Json.parse(contentAsString(result));
@@ -486,7 +535,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(3L);
                 user = getAuthenticatedUser(user);
-                AuthToken token = user.getAuthTokens().get(0);
+                AuthToken token = user.getAuthToken();
 
                 Show show = Show.find.byId(1L);
 
@@ -540,7 +589,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
-                AuthToken token = user.getAuthTokens().get(0);
+                AuthToken token = user.getAuthToken();
 
                 Result result = callAction(
                         controllers.routes.ref.Users.unsubscribeUserFromShow(1L, 100L),
@@ -570,7 +619,7 @@ public class Test_Routes_User {
                 User user = User.find.byId(1L);
                 user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
-                AuthToken token = user.getAuthTokens().get(0);
+                AuthToken token = user.getAuthToken();
 
                 Show show = Show.find.byId(1L);
 
@@ -606,7 +655,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
-                AuthToken token = user.getAuthTokens().get(0);
+                AuthToken token = user.getAuthToken();
 
                 Result result = callAction(
                         controllers.routes.ref.Users.latestEpisodes(user.getId()),
@@ -658,7 +707,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
-                AuthToken token = user.getAuthTokens().get(0);
+                AuthToken token = user.getAuthToken();
 
                 Result result = callAction(
                         controllers.routes.ref.Users.latestEpisodes(user.getId()),

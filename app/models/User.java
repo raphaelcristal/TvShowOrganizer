@@ -7,7 +7,6 @@ import play.data.validation.Constraints;
 import play.db.ebean.Model;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,9 +25,10 @@ public class User extends Model {
     @JsonIgnore
     private String password;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @Constraints.Required
+    @OneToOne(cascade = {CascadeType.ALL})
     @JsonIgnore
-    private List<AuthToken> authTokens;
+    private AuthToken authToken;
 
     @ManyToMany(cascade = {CascadeType.ALL})
     private Set<Show> shows;
@@ -66,12 +66,12 @@ public class User extends Model {
         this.shows = shows;
     }
 
-    public List<AuthToken> getAuthTokens() {
-        return authTokens;
+    public AuthToken getAuthToken() {
+        return authToken;
     }
 
-    public void setAuthTokens(List<AuthToken> authTokens) {
-        this.authTokens = authTokens;
+    public void setAuthToken(AuthToken authToken) {
+        this.authToken = authToken;
     }
 
 

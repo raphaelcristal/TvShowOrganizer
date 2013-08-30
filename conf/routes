@@ -12,7 +12,7 @@ GET     /users/:userId/latestEpisodes                                           
 PUT     /users/:userId/shows/:showId                                            controllers.Users.subscribeUserToShow(userId: Long, showId: Long)
 DELETE  /users/:userId/shows/:showId                                            controllers.Users.unsubscribeUserFromShow(userId: Long, showId: Long)
 POST    /users                                                                  controllers.Users.createUser(email: String, password: String)
-POST    /users/authtoken                                                        controllers.Users.authenticateUser(email: String, password: String)
+GET     /users/authtoken                                                        controllers.Users.authenticateUser(email: String, password: String)
 PUT     /users/:userId/password                                                 controllers.Users.updatePassword(userId: Long, oldPassword: String, newPassword: String)
 
 # Shows

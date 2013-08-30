@@ -230,7 +230,7 @@ angular
 
             $http({
                 url: '/users/authtoken',
-                method: 'POST',
+                method: 'GET',
                 params: {
                     email: email,
                     password: password
