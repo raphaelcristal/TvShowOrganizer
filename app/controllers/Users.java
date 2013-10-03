@@ -1,6 +1,7 @@
 package controllers;
 
-import com.avaje.ebean.ValidationException;
+import com.avaje.ebean.*;
+import play.db.*;
 import models.*;
 import models.JsonViews.ShowWithoutSeasonsNetworkActors;
 import org.codehaus.jackson.JsonNode;
@@ -13,7 +14,9 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.persistence.PersistenceException;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 import static controllers.JsonHelper.JsonErrorMessage;
 import static controllers.Security.generateToken;
@@ -201,9 +204,6 @@ public class Users extends Controller {
             return unauthorized(JsonErrorMessage("Not authorized."));
         }
 
-
-        Set<Show> shows = User.find.byId(userId).getShows();
-
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
 
@@ -213,37 +213,52 @@ public class Users extends Controller {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = mapper.createArrayNode();
 
-        for (Show show : shows) {
+        String sql = "SELECT"
+                + " sh.title as show, sh.airtime as airhour,"
+                + " ep.description as description, ep.number as number,"
+                + " ep.title as title, ep.airtime as airtime, ne.name as network "
+                + " FROM users u"
+                + " JOIN users_shows us ON us.users_id = u.id"
+                + " JOIN shows sh ON sh.id = us.shows_id"
+                + " JOIN seasons se ON se.show_id = sh.id"
+                + " JOIN episodes ep ON ep.season_id = se.id"
+                + " JOIN networks ne ON ne.id = sh.network_id"
+                + " WHERE u.id = ?"
+                + " AND ep.airtime > ?";
 
-            List<Season> seasons = show.getSeasons();
 
-            List<Long> ids = new ArrayList<>();
-            for (Season season : seasons) {
-                ids.add(season.getId());
-            }
+        try (Connection connection = DB.getConnection()) {
 
-            Set<Episode> episodes = Episode.find.where()
-                    .in("season_id", ids)
-                    .gt("airtime", calendar.getTime())
-                    .findSet();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, userId);
+            preparedStatement.setDate(2, new java.sql.Date(calendar.getTime().getTime()));
+            preparedStatement.execute();
 
-            String networkName = show.getNetwork() != null ? show.getNetwork().getName() : "";
-            for (Episode episode : episodes) {
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while(resultSet.next()) {
 
                 ObjectNode objectNode = mapper.createObjectNode();
-                objectNode.put("show", show.getTitle());
-                objectNode.put("airhour", show.getAirtime());
-                objectNode.put("network", networkName);
-                objectNode.put("description", episode.getDescription());
-                objectNode.put("number", episode.getNumber());
-                objectNode.put("title", episode.getTitle());
-                objectNode.put("airtime", episode.getAirtime().getTime());
+                objectNode.put("show", resultSet.getString("show"));
+                if(resultSet.getString("airhour") != null) {
+                    objectNode.put("airhour", resultSet.getDate("airhour").getTime());
+                }
+                objectNode.put("network", resultSet.getString("network"));
+                objectNode.put("description", resultSet.getString("description"));
+                objectNode.put("number", resultSet.getInt("number"));
+                objectNode.put("title", resultSet.getString("title"));
+                if(resultSet.getString("airtime") != null) {
+                    objectNode.put("airtime", resultSet.getDate("airtime").getTime());
+                }
 
                 arrayNode.add(objectNode);
 
             }
 
+            connection.close();
+        } catch (SQLException e) {
+           return internalServerError(JsonErrorMessage("An error occurred. Please contact your administrator."));
         }
+
 
         return ok(toJson(arrayNode));
 
