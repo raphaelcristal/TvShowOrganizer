@@ -47,4 +47,24 @@ public class Season extends Model {
 
     public static Finder<Long, Season> find = new Finder<>(Long.class, Season.class);
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Season season = (Season) o;
+
+        if (id != null ? !id.equals(season.id) : season.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
+    }
 }

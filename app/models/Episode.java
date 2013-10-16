@@ -69,4 +69,24 @@ public class Episode extends Model {
 
     public static Finder<Long, Episode> find = new Finder<>(Long.class, Episode.class);
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Episode episode = (Episode) o;
+
+        if (id != null ? !id.equals(episode.id) : episode.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
+    }
 }
