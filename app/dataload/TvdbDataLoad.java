@@ -143,7 +143,8 @@ public class TvdbDataLoad extends AbstractDataLoad {
 
     }
 
-    List<Show> loadShows() throws ParserConfigurationException, SAXException, IOException {
+    @Override
+    public List<Show> loadShows() throws ParserConfigurationException, SAXException, IOException {
 
         saveTvdbIds(true);
         List<Show> shows = new ArrayList<>();

@@ -54,7 +54,8 @@ public class ImdbDataLoad extends AbstractDataLoad {
 
     }
 
-    List<Show> loadShows() throws IOException, ParseException {
+    @Override
+    public List<Show> loadShows() throws IOException, ParseException {
 
         Path releaseDates = Paths.get(this.dataPath, "release-dates.list");
         List<Show> shows = new ArrayList<>();

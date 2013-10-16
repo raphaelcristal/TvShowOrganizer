@@ -60,7 +60,7 @@ public abstract class AbstractDataLoad {
      *
      * @return a list of all shows to import
      */
-    abstract List<Show> loadShows() throws IOException, ParseException, ParserConfigurationException, SAXException;
+    public abstract List<Show> loadShows() throws IOException, ParseException, ParserConfigurationException, SAXException;
 
     private Episode findEpisode(List<Episode> episodes, int number) {
         for(Episode episode : episodes) {
@@ -116,11 +116,11 @@ public abstract class AbstractDataLoad {
                 savedShow.getActors().add(newActor);
             }
         }
-        if(savedShow.getAirday() == null) savedShow.setAirday(newShow.getAirday());
-        if(savedShow.getAirtime() == null) savedShow.setAirtime(newShow.getAirtime());
-        if(savedShow.getDescription() == null) savedShow.setDescription(newShow.getDescription());
-        if(savedShow.getTvdbId() == null) savedShow.setTvdbId(newShow.getTvdbId());
-        if(savedShow.getNetwork() == null && newShow.getNetwork() != null) {
+        if(newShow.getAirday() != null) savedShow.setAirday(newShow.getAirday());
+        if(newShow.getAirtime() != null) savedShow.setAirtime(newShow.getAirtime());
+        if(newShow.getDescription() != null) savedShow.setDescription(newShow.getDescription());
+        if(newShow.getTvdbId() != null) savedShow.setTvdbId(newShow.getTvdbId());
+        if(newShow.getNetwork() != null) {
             savedShow.setNetwork(createOrLoadNetwork(newShow.getNetwork()));
         }
         for(Season season : newShow.getSeasons()) {
