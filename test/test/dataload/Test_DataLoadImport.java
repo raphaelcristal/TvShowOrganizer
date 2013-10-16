@@ -1,19 +1,18 @@
 package test.dataload;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import dataload.AbstractDataLoad;
 import models.*;
 import org.junit.Test;
-import play.Logger;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.*;
 
-public class Test_DataLoadUpdate {
+public class Test_DataLoadImport {
 
     private Show createShow(String title) {
         Show show = new Show();
@@ -27,6 +26,80 @@ public class Test_DataLoadUpdate {
         } catch (Exception e) {
             assertThat(true).overridingErrorMessage("MockDataLoad: Could not import show. " + e).isFalse();
         }
+    }
+
+    @Test
+    public void importNewShow() {
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+            public void run() {
+
+                Show show = createShow("title");
+
+                show.setAirday(Day.MONDAY);
+                show.setAirtime("1:00 PM");
+                show.setDescription("description");
+                show.setTvdbId(1);
+
+                Season season1 = new Season();
+                season1.setNumber(1);
+                Season season2 = new Season();
+                season2.setNumber(2);
+
+                Episode episode1 = new Episode();
+                episode1.setNumber(1);
+                episode1.setAirtime(new Date(1000));
+                episode1.setDescription("description");
+                episode1.setTitle("title");
+                Episode episode2 = new Episode();
+                episode2.setNumber(1);
+                episode2.setAirtime(new Date(1000));
+                episode2.setDescription("description");
+                episode2.setTitle("title");
+
+                season1.setEpisodes(ImmutableList.of(episode1));
+                season2.setEpisodes(ImmutableList.of(episode2));
+
+                show.setSeasons(ImmutableList.of(season1, season2));
+
+                Network network = new Network();
+                network.setName("network");
+                show.setNetwork(network);
+
+                Actor actor1 = new Actor();
+                actor1.setName("actor1");
+                Actor actor2 = new Actor();
+                actor2.setName("actor2");
+                show.setActors(ImmutableSet.of(actor1, actor2));
+
+                MockDataLoad mockDataLoad = new MockDataLoad();
+                mockDataLoad.addShow(show);
+                loadShows(mockDataLoad);
+
+                Show importedShow = Show.find.where().eq("title", "title").findUnique();
+
+                assertThat(importedShow.getAirday()).isEqualTo(Day.MONDAY);
+                assertThat(importedShow.getAirtime()).isEqualTo("1:00 PM");
+                assertThat(importedShow.getDescription()).isEqualTo("description");
+                assertThat(importedShow.getTitle()).isEqualTo("title");
+                assertThat(importedShow.getTvdbId()).isEqualTo(1);
+                assertThat(importedShow.getNetwork().getName()).isEqualTo("network");
+                assertThat(importedShow.getActors()).contains(actor1);
+                assertThat(importedShow.getActors()).contains(actor2);
+                assertThat(importedShow.getSeasons().get(0)).isEqualTo(season1);
+                assertThat(importedShow.getSeasons().get(1)).isEqualTo(season2);
+
+                assertThat(importedShow.getSeasons().get(0).getEpisodes().get(0).getNumber()).isEqualTo(1);
+                assertThat(importedShow.getSeasons().get(0).getEpisodes().get(0).getAirtime()).isEqualTo(new Date(1000));
+                assertThat(importedShow.getSeasons().get(0).getEpisodes().get(0).getDescription()).isEqualTo("description");
+                assertThat(importedShow.getSeasons().get(0).getEpisodes().get(0).getTitle()).isEqualTo("title");
+
+                assertThat(importedShow.getSeasons().get(1).getEpisodes().get(0).getNumber()).isEqualTo(1);
+                assertThat(importedShow.getSeasons().get(1).getEpisodes().get(0).getAirtime()).isEqualTo(new Date(1000));
+                assertThat(importedShow.getSeasons().get(1).getEpisodes().get(0).getDescription()).isEqualTo("description");
+                assertThat(importedShow.getSeasons().get(1).getEpisodes().get(0).getTitle()).isEqualTo("title");
+
+            }
+        });
     }
 
     @Test
