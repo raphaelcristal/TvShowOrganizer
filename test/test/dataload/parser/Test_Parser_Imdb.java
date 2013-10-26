@@ -23,7 +23,7 @@ public class Test_Parser_Imdb {
         try {
             shows = imdbParser.parseShows();
         } catch (Exception e) {
-            assertThat(true).isFalse();
+            assertThat(true).overridingErrorMessage("Failure while parsing imdb test file").isFalse();
         }
 
         assertThat(shows).hasSize(3);

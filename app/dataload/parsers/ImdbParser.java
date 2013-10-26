@@ -59,7 +59,8 @@ public class ImdbParser extends AbstractShowParser {
                 //everything for a show was parsed, we move on to a new show
                 if (!showName.equals(currentShow.getTitle())) {
 
-                    addSeasonsToShow(currentShow, seasons);
+                    List<Season> orderedSeasons = orderedSeasonList(seasons);
+                    currentShow.setSeasons(orderedSeasons);
                     shows.add(currentShow);
                     currentShow = createNewShow(showName);
                     seasons.clear();
@@ -77,7 +78,8 @@ public class ImdbParser extends AbstractShowParser {
         }
 
         // save the last show
-        addSeasonsToShow(currentShow, seasons);
+        List<Season> orderedSeasons = orderedSeasonList(seasons);
+        currentShow.setSeasons(orderedSeasons);
         shows.add(currentShow);
 
         return shows;

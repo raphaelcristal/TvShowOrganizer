@@ -3,14 +3,16 @@ package dataload.parsers;
 import models.Episode;
 import models.Season;
 import models.Show;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
 public abstract class AbstractShowParser {
 
-    public abstract List<Show> parseShows() throws IOException, ParseException;
+    public abstract List<Show> parseShows() throws IOException, ParseException, ParserConfigurationException, SAXException;
 
     protected Episode createEpisode(String title, Date airtime, int episodeNumber, String description) {
 
@@ -24,7 +26,7 @@ public abstract class AbstractShowParser {
 
     }
 
-    protected void addSeasonsToShow(Show show, Map<Integer, Map<Integer, Episode>> seasons) {
+    protected List<Season> orderedSeasonList(Map<Integer, Map<Integer, Episode>> seasons) {
 
         List<Season> orderedSeasons = new ArrayList<>();
 
@@ -50,7 +52,8 @@ public abstract class AbstractShowParser {
                 return o1.getNumber() - o2.getNumber();
             }
         });
-        show.setSeasons(orderedSeasons);
+
+        return orderedSeasons;
 
     }
 
