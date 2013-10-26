@@ -4,9 +4,13 @@ import models.Episode;
 import models.Season;
 import models.Show;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.*;
 
 public abstract class AbstractShowParser {
+
+    public abstract List<Show> parseShows() throws IOException, ParseException;
 
     protected Episode createEpisode(String title, Date airtime, int episodeNumber, String description) {
 

@@ -1,16 +1,14 @@
 package test.dataload;
 
-import dataload.AbstractDataLoad;
+import dataload.parsers.AbstractShowParser;
 import models.Show;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockDataLoad extends AbstractDataLoad {
+public class FakeShowParser extends AbstractShowParser {
 
     private List<Show> shows = new ArrayList<>();
 
@@ -19,7 +17,7 @@ public class MockDataLoad extends AbstractDataLoad {
     }
 
     @Override
-    public List<Show> loadShows() throws IOException, ParseException, ParserConfigurationException, SAXException {
+    public List<Show> parseShows() throws IOException, ParseException {
         return shows;
     }
 }

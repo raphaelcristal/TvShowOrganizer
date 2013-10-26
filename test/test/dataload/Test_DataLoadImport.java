@@ -2,7 +2,8 @@ package test.dataload;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import dataload.AbstractDataLoad;
+import dataload.DataLoad;
+import dataload.parsers.AbstractShowParser;
 import models.*;
 import org.junit.Test;
 
@@ -20,11 +21,12 @@ public class Test_DataLoadImport {
         return show;
     }
 
-    private void loadShows(AbstractDataLoad dataLoad) {
+    private void loadShows(AbstractShowParser fakeShowParser) {
         try {
-            dataLoad.saveShows();
+            DataLoad dataLoad = new DataLoad(ImmutableList.of(fakeShowParser));
+            dataLoad.importShows();
         } catch (Exception e) {
-            assertThat(true).overridingErrorMessage("MockDataLoad: Could not import show. " + e).isFalse();
+            assertThat(true).overridingErrorMessage("FakeShowParser: Could not import show. " + e).isFalse();
         }
     }
 
@@ -71,9 +73,9 @@ public class Test_DataLoadImport {
                 actor2.setName("actor2");
                 show.setActors(ImmutableSet.of(actor1, actor2));
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "title").findUnique();
 
@@ -108,18 +110,18 @@ public class Test_DataLoadImport {
             public void run() {
 
                 Show show = createShow("test");
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 Network network = new Network();
                 network.setName("test");
                 show.setNetwork(network);
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
                 assertThat(importedShow.getNetwork().getName()).isEqualTo("test");
@@ -134,9 +136,9 @@ public class Test_DataLoadImport {
             public void run() {
 
                 Show show = createShow("test");
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 Network network = new Network();
@@ -144,9 +146,9 @@ public class Test_DataLoadImport {
                 network.save();
                 show.setNetwork(network);
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
                 assertThat(importedShow.getNetwork().getName()).isEqualTo("test");
@@ -164,17 +166,17 @@ public class Test_DataLoadImport {
                 Network network = new Network();
                 network.setName("test");
                 show.setNetwork(network);
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 Network newNetwork = new Network();
                 newNetwork.setName("test2");
                 show.setNetwork(newNetwork);
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
                 assertThat(importedShow.getNetwork().getName()).isEqualTo("test2");
@@ -194,15 +196,15 @@ public class Test_DataLoadImport {
                 network.save();
                 show.setNetwork(network);
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Network newNetwork = new Network();
                 newNetwork.setName("test2");
                 newNetwork.save();
                 show.setNetwork(newNetwork);
-                loadShows(mockDataLoad);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
                 assertThat(importedShow.getNetwork().getName()).isEqualTo("test2");
@@ -221,9 +223,9 @@ public class Test_DataLoadImport {
                 actor.setName("hans");
                 show.getActors().add(actor);
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -244,9 +246,9 @@ public class Test_DataLoadImport {
                 actor.save();
                 show.getActors().add(actor);
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -266,18 +268,18 @@ public class Test_DataLoadImport {
                 actor.setName("hans");
                 show.getActors().add(actor);
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Actor newActor = new Actor();
                 newActor.setName("peter");
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
                 importedShow.getActors().add(newActor);
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(importedShow);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(importedShow);
+                loadShows(fakeShowParser);
 
                 importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -294,18 +296,18 @@ public class Test_DataLoadImport {
             public void run() {
 
                 Show show = createShow("test");
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 Season season = new Season();
                 season.setNumber(1);
                 show.setSeasons(ImmutableList.of(season));
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -325,18 +327,18 @@ public class Test_DataLoadImport {
                 Season season = new Season();
                 season.setNumber(1);
                 show.setSeasons(ImmutableList.of(season));
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 Season newSeason = new Season();
                 newSeason.setNumber(2);
                 show.setSeasons(ImmutableList.of(newSeason));
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -357,9 +359,9 @@ public class Test_DataLoadImport {
                 Season season = new Season();
                 season.setNumber(1);
                 show.setSeasons(ImmutableList.of(season));
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 season = new Season();
@@ -369,9 +371,9 @@ public class Test_DataLoadImport {
                 season.setEpisodes(ImmutableList.of(episode));
                 show.setSeasons(ImmutableList.of(season));
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -400,9 +402,9 @@ public class Test_DataLoadImport {
                 season.setEpisodes(ImmutableList.of(episode));
                 show.setSeasons(ImmutableList.of(season));
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 season = new Season();
@@ -416,9 +418,9 @@ public class Test_DataLoadImport {
                 season.setEpisodes(ImmutableList.of(episode));
                 show.setSeasons(ImmutableList.of(season));
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -452,9 +454,9 @@ public class Test_DataLoadImport {
                 season.setEpisodes(ImmutableList.of(episode));
                 show.setSeasons(ImmutableList.of(season));
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 show = createShow("test");
                 season = new Season();
@@ -465,9 +467,9 @@ public class Test_DataLoadImport {
                 season.setEpisodes(ImmutableList.of(episode));
                 show.setSeasons(ImmutableList.of(season));
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "test").findUnique();
 
@@ -489,9 +491,9 @@ public class Test_DataLoadImport {
         running(fakeApplication(inMemoryDatabase()), new Runnable() {
             public void run() {
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(createShow("a test show"));
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(createShow("a test show"));
+                loadShows(fakeShowParser);
 
                 Network network = new Network();
                 network.setName("a test network");
@@ -502,9 +504,9 @@ public class Test_DataLoadImport {
                 show.setDescription("a test description");
                 show.setTvdbId(5);
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "a test show").findUnique();
 
@@ -522,9 +524,9 @@ public class Test_DataLoadImport {
         running(fakeApplication(inMemoryDatabase()), new Runnable() {
             public void run() {
 
-                MockDataLoad mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(createShow("a test show"));
-                loadShows(mockDataLoad);
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(createShow("a test show"));
+                loadShows(fakeShowParser);
 
                 Network network = new Network();
                 network.setName("a test network");
@@ -535,9 +537,9 @@ public class Test_DataLoadImport {
                 show.setDescription("a test description");
                 show.setTvdbId(5);
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(show);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
 
                 Show updateShow = createShow("a test show");
                 updateShow.setAirday(null);
@@ -545,9 +547,9 @@ public class Test_DataLoadImport {
                 updateShow.setDescription(null);
                 updateShow.setTvdbId(null);
 
-                mockDataLoad = new MockDataLoad();
-                mockDataLoad.addShow(updateShow);
-                loadShows(mockDataLoad);
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(updateShow);
+                loadShows(fakeShowParser);
 
                 Show importedShow = Show.find.where().eq("title", "a test show").findUnique();
 

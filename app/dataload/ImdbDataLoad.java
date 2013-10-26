@@ -3,7 +3,9 @@ package dataload;
 import models.Episode;
 import models.Season;
 import models.Show;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -112,6 +114,11 @@ public class ImdbDataLoad extends AbstractDataLoad {
 
 
         return shows;
+    }
+
+    @Override
+    public List<Show> loadUpdates() throws IOException, ParseException, ParserConfigurationException, SAXException {
+        return new ArrayList<>();
     }
 
 }
