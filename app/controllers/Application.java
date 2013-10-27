@@ -1,12 +1,18 @@
 package controllers;
 
-import dataload.ImdbDataLoad;
-import dataload.TvdbDataLoad;
+import dataload.DataLoad;
+import dataload.parsers.AbstractShowParser;
+import dataload.parsers.ImdbParser;
+import dataload.provider.ImdbProvider;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import views.html.index;
+
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application extends Controller {
 
@@ -22,12 +28,14 @@ public class Application extends Controller {
             return forbidden();
         }
 
+        ImdbProvider imdbProvider = new ImdbProvider(Paths.get("app/dataload/data/release-dates.list"));
+        ImdbParser imdbParser = new ImdbParser(imdbProvider);
+        List<AbstractShowParser> parsers = new ArrayList<>();
+        parsers.add(imdbParser);
+        DataLoad dataLoad = new DataLoad(parsers);
 
-        ImdbDataLoad imdbDataLoad = new ImdbDataLoad();
-        TvdbDataLoad tvdbDataLoad = new TvdbDataLoad();
         try {
-            imdbDataLoad.saveShows();
-            tvdbDataLoad.saveShows();
+            dataLoad.importShows();
         } catch (Exception e) {
             Logger.error(e.toString());
             return ok("An error occured. Check the logs.");
