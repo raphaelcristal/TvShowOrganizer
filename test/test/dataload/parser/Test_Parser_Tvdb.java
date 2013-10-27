@@ -84,7 +84,7 @@ public class Test_Parser_Tvdb {
                 assertThat(firstSeason.getEpisodes()).hasSize(7);
 
                 Episode firstEpisode = firstSeason.getEpisodes().get(0);
-                assertThat(firstEpisode.getAirtime().toString()).isEqualTo("Sun Jan 31");
+                assertThat(firstEpisode.getAirtime().toString()).startsWith("Sun Jan 31");
                 assertThat(firstEpisode.getDescription()).startsWith("After Peter heavily drinks at a bachelor party");
                 assertThat(firstEpisode.getNumber()).isEqualTo(1);
                 assertThat(firstEpisode.getTitle()).isEqualTo("Death has a Shadow");
@@ -175,7 +175,7 @@ public class Test_Parser_Tvdb {
                 assertThat(eigthSeason.getEpisodes()).hasSize(1);
 
                 Episode firstEpisode = eigthSeason.getEpisodes().get(0);
-                assertThat(firstEpisode.getAirtime().toString()).isEqualTo("Sun Jan 31");
+                assertThat(firstEpisode.getAirtime().toString()).startsWith("Sun Jan 31");
                 assertThat(firstEpisode.getDescription()).startsWith("Brian gets a gig writing for a teen magazine");
                 assertThat(firstEpisode.getNumber()).isEqualTo(11);
                 assertThat(firstEpisode.getTitle()).isEqualTo("Dial Meg for Murder");
