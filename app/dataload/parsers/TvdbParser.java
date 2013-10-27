@@ -1,5 +1,6 @@
 package dataload.parsers;
 
+import com.google.common.collect.ImmutableList;
 import dataload.provider.TvdbProvider;
 import models.*;
 import org.w3c.dom.Element;
@@ -15,9 +16,82 @@ import java.util.*;
 public class TvdbParser extends AbstractShowParser {
 
     private final TvdbProvider tvdbProvider;
+    private final boolean fromFilesOnly;
 
-    public TvdbParser(TvdbProvider tvdbProvider) {
+    public TvdbParser(TvdbProvider tvdbProvider, boolean fromFilesOnly) {
         this.tvdbProvider = tvdbProvider;
+        this.fromFilesOnly = fromFilesOnly;
+    }
+
+    @Override
+    public List<Show> parseUpdates() throws Exception {
+
+        List<Show> shows = new ArrayList<>();
+
+        Element root = tvdbProvider.fetchUpdates().getDocumentElement();
+
+        for (Show show : fetchShowsToUpdate(root)) {
+
+            Element showXml = tvdbProvider.fetchShow(show.getTvdbId()).getDocumentElement();
+            Show updatedShow = parseShow(show, showXml);
+            shows.add(updatedShow);
+
+        }
+
+        List<Show> episodeUpdates = fetchEpisodesToUpdate(root);
+        shows.addAll(episodeUpdates);
+
+        return shows;
+    }
+
+    private List<Show> fetchShowsToUpdate(Element root) {
+
+        List<Show> shows = new ArrayList<>();
+
+        NodeList series = root.getElementsByTagName("Series");
+        for (int i = 0; i < series.getLength(); i++) {
+            Element serie = (Element) series.item(i);
+            if (serie.getParentNode().getNodeName().equals("Data")) {
+                Integer id = Integer.valueOf(serie.getElementsByTagName("id").item(0).getTextContent());
+                Show show = Show.find.where().eq("tvdbId", id).findUnique();
+                if (show != null) {
+                    shows.add(show);
+                }
+            }
+        }
+
+        return shows;
+
+    }
+
+    private List<Show> fetchEpisodesToUpdate(Element root) throws Exception {
+
+        List<Show> shows = new ArrayList<>();
+
+        NodeList episodes = root.getElementsByTagName("Episode");
+        for (int i = 0; i < episodes.getLength(); i++) {
+
+            Element episode = (Element) episodes.item(i);
+            String episodeId = episode.getElementsByTagName("id").item(0).getTextContent();
+            String showId = episode.getElementsByTagName("Series").item(0).getTextContent();
+
+            Show show = Show.find.where().eq("tvdbId", showId).findUnique();
+            if (show != null) {
+                Element episodeXml = tvdbProvider.fetchEpisode(Integer.valueOf(episodeId)).getDocumentElement();
+                int seasonNumber = Integer.parseInt(episodeXml.getElementsByTagName("SeasonNumber").item(0).getTextContent());
+
+                Season season = new Season();
+                season.setNumber(seasonNumber);
+                season.setEpisodes(ImmutableList.of(parseEpisode(episodeXml)));
+
+                show.setSeasons(ImmutableList.of(season));
+
+                shows.add(show);
+
+            }
+        }
+
+        return shows;
     }
 
     @Override
@@ -25,14 +99,21 @@ public class TvdbParser extends AbstractShowParser {
 
         List<Show> shows = new ArrayList<>();
 
-        for (Show show : Show.find.where().isNotNull("tvdbId").findSet()) {
+        for (Show show : Show.find.all()) {
 
-            Element root = tvdbProvider.fetchShow(show.getTvdbId()).getDocumentElement();
-            show = parseShow(show, root);
+            String title = show.getTitle();
+            int tvdbId = fromFilesOnly ? tvdbProvider.getIdByNameFromFile(title) : tvdbProvider.getIdByNameFromApi(title);
 
-            shows.add(show);
+            if (tvdbId != -1) {
+                Element root = tvdbProvider.fetchShow(tvdbId).getDocumentElement();
+                show = parseShow(show, root);
+
+                shows.add(show);
+            }
 
         }
+
+        tvdbProvider.saveTitleIdMappingToFile();
 
         return shows;
 

@@ -86,6 +86,11 @@ public class ImdbParser extends AbstractShowParser {
 
     }
 
+    @Override
+    public List<Show> parseUpdates() {
+        return new ArrayList<>();
+    }
+
     private Calendar createAirtime(Matcher matcher) throws ParseException {
 
         Calendar calendar = Calendar.getInstance();

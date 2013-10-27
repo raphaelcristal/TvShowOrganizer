@@ -2,8 +2,10 @@ package dataload;
 
 import dataload.parsers.AbstractShowParser;
 import models.*;
+import org.xml.sax.SAXException;
 import play.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
@@ -39,8 +41,23 @@ public class DataLoad {
                 insertIntoDatabase(shows);
             } catch (IOException e) {
                 Logger.error("Error while trying to import shows with parser: " + showParser.getClass().getName(), e);
-            } catch (ParseException e) {
+            } catch (ParseException | ParserConfigurationException | SAXException e) {
                 Logger.error("Error while trying to parse shows with parser: " + showParser.getClass().getName(), e);
+            }
+
+        }
+
+    }
+
+    public void updateShows() {
+
+        for (AbstractShowParser showParser : showParsers) {
+
+            try {
+                List<Show> shows = showParser.parseUpdates();
+                insertIntoDatabase(shows);
+            } catch (Exception e) {
+                Logger.error("Error while trying to update shows with parser: " + showParser.getClass().getName(), e);
             }
 
         }

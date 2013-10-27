@@ -30,6 +30,15 @@ public class Test_DataLoadImport {
         }
     }
 
+    private void loadUpdates(AbstractShowParser fakeShowParser) {
+        try {
+            DataLoad dataLoad = new DataLoad(ImmutableList.of(fakeShowParser));
+            dataLoad.updateShows();
+        } catch (Exception e) {
+            assertThat(true).overridingErrorMessage("FakeShowParser: Could not update show. " + e).isFalse();
+        }
+    }
+
     @Test
     public void importNewShow() {
         running(fakeApplication(inMemoryDatabase()), new Runnable() {
@@ -558,6 +567,69 @@ public class Test_DataLoadImport {
                 assertThat(importedShow.getDescription()).isNotNull();
                 assertThat(importedShow.getTvdbId()).isNotNull();
 
+            }
+        });
+    }
+
+    @Test
+    public void insertNewEpisodeDuringUpdate() {
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+            public void run() {
+
+                FakeShowParser fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(createShow("a test show"));
+                loadShows(fakeShowParser);
+
+                Show show = createShow("a test show");
+                show.setAirday(Day.MONDAY);
+                show.setAirtime("8:00 PM");
+                show.setDescription("a test description");
+                show.setTvdbId(5);
+
+                Season season = new Season();
+                season.setNumber(1);
+
+                Episode episode = new Episode();
+                episode.setNumber(1);
+                episode.setTitle("testtitle");
+
+                season.setEpisodes(ImmutableList.of(episode));
+
+                show.setSeasons(ImmutableList.of(season));
+
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addShow(show);
+                loadShows(fakeShowParser);
+
+                Show updateShow = createShow("a test show");
+
+                Season seasonUpdate = new Season();
+                season.setNumber(1);
+
+                Episode episodeUpdate = new Episode();
+                episode.setNumber(2);
+                episode.setTitle("testtitle2");
+
+                seasonUpdate.setEpisodes(ImmutableList.of(episode));
+                updateShow.setSeasons(ImmutableList.of(season));
+
+                fakeShowParser = new FakeShowParser();
+                fakeShowParser.addUpdate(updateShow);
+                loadUpdates(fakeShowParser);
+
+                Show importedShow = Show.find.where().eq("title", "a test show").findUnique();
+
+                assertThat(importedShow.getSeasons()).hasSize(1);
+                Season firstSeason = importedShow.getSeasons().get(0);
+                for (Episode updatedEpisode : firstSeason.getEpisodes()) {
+                    if (updatedEpisode.getNumber() == 1) {
+                        assertThat(updatedEpisode.getTitle()).isEqualTo("testtitle");
+                    }
+                    if (updatedEpisode.getNumber() == 2) {
+                        assertThat(updatedEpisode.getTitle()).isEqualTo("testtitle2");
+                    }
+
+                }
             }
         });
     }

@@ -62,6 +62,8 @@ public abstract class AbstractDataLoad {
      */
     public abstract List<Show> loadShows() throws IOException, ParseException, ParserConfigurationException, SAXException;
 
+    public abstract List<Show> loadUpdates() throws IOException, ParseException, ParserConfigurationException, SAXException;
+
     private Episode findEpisode(List<Episode> episodes, int number) {
         for (Episode episode : episodes) {
             if (episode.getNumber() == number) return episode;
@@ -144,9 +146,7 @@ public abstract class AbstractDataLoad {
 
     }
 
-    public void saveShows() throws ParserConfigurationException, SAXException, ParseException, IOException {
-
-        List<Show> shows = loadShows();
+    private void insertIntoDatabase(List<Show> shows) {
 
         for (Show show : shows) {
 
@@ -175,6 +175,20 @@ public abstract class AbstractDataLoad {
                 }
             }
         }
+
+    }
+
+    public void saveShows() throws ParserConfigurationException, SAXException, ParseException, IOException {
+
+        List<Show> shows = loadShows();
+        insertIntoDatabase(shows);
+
+    }
+
+    public void updateShows() throws ParserConfigurationException, SAXException, ParseException, IOException {
+
+        List<Show> shows = loadUpdates();
+        insertIntoDatabase(shows);
 
     }
 

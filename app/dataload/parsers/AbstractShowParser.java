@@ -14,6 +14,8 @@ public abstract class AbstractShowParser {
 
     public abstract List<Show> parseShows() throws IOException, ParseException, ParserConfigurationException, SAXException;
 
+    public abstract List<Show> parseUpdates() throws Exception;
+
     protected Episode createEpisode(String title, Date airtime, int episodeNumber, String description) {
 
         Episode episode = new Episode();
