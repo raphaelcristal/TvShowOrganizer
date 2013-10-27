@@ -42,7 +42,7 @@ public class Test_Parser_Imdb {
         assertThat(firstShowEpisodes.get(6).getTitle()).isEqualTo("Timing Is Everything");
         assertThat(firstShowEpisodes.get(7).getTitle()).isEqualTo("Stay");
 
-        assertThat(firstShowEpisodes.get(0).getAirtime().toString()).isEqualTo("Sun Jan 22 00:00:00 CET 2006");
+        assertThat(firstShowEpisodes.get(0).getAirtime().toString()).startsWith("Sun Jan 22");
 
         Show secondShow = shows.get(1);
         assertThat(secondShow.getTitle()).isEqualTo("#Follow");
