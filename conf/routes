@@ -3,42 +3,42 @@
 # ~~~~
 
 # Home page
-GET     /                                                                       controllers.Application.index()
-GET     /setup                                                                  controllers.Application.setUp(fromFilesOnly: Boolean ?= true)
+GET           /                                                                   controllers.Application.index()
+GET           /setup                                                              controllers.Application.setUp(fromFilesOnly: Boolean ?= true)
 
 # Users
-GET     /users/:userId/shows                                                    controllers.Users.getShows(userId: Long)
-GET     /users/:userId/latestEpisodes                                           controllers.Users.latestEpisodes(userId: Long)
-PUT     /users/:userId/shows/:showId                                            controllers.Users.subscribeUserToShow(userId: Long, showId: Long)
-DELETE  /users/:userId/shows/:showId                                            controllers.Users.unsubscribeUserFromShow(userId: Long, showId: Long)
-POST    /users                                                                  controllers.Users.createUser(email: String, password: String)
-GET     /users/authtoken                                                        controllers.Users.authenticateUser(email: String, password: String)
-PUT     /users/:userId/password                                                 controllers.Users.updatePassword(userId: Long, oldPassword: String, newPassword: String)
-
+GET           /users/:userId/shows                                                controllers.Users.getShows(userId: Long)
+GET           /users/:userId/latestEpisodes                                       controllers.Users.latestEpisodes(userId: Long)
+PUT           /users/:userId/shows/:showId                                        controllers.Users.subscribeUserToShow(userId: Long, showId: Long)
+DELETE        /users/:userId/shows/:showId                                        controllers.Users.unsubscribeUserFromShow(userId: Long, showId: Long)
+POST          /users                                                              controllers.Users.createUser(email: String, password: String)
+GET           /users/authtoken                                                    controllers.Users.authenticateUser(email: String, password: String)
+PUT           /users/:userId/password                                             controllers.Users.updatePassword(userId: Long, oldPassword: String, newPassword: String)
+PUT           /users/:userId/settings/hideDescriptions                            controllers.Users.updateHideDescriptions(userId: Long, hideShowDescriptions: Boolean)
 # Shows
-GET     /shows                                                                  controllers.Shows.getAllShows()
-GET     /shows/search                                                           controllers.Shows.searchShow(title: String)
-GET     /shows/:showId                                                          controllers.Shows.getShow(showId: Long)
+GET           /shows                                                              controllers.Shows.getAllShows()
+GET           /shows/search                                                       controllers.Shows.searchShow(title: String)
+GET           /shows/:showId                                                      controllers.Shows.getShow(showId: Long)
 
 # Seasons
-GET     /seasons/:seasonId                                                      controllers.Seasons.getSeasonById(seasonId: Long)
-GET     /shows/:showId/seasons                                                  controllers.Seasons.getAllSeasonsForShow(showId: Long)
-GET     /shows/:showId/seasons/:seasonNumber                                    controllers.Seasons.getSeasonForShow(showId: Long, seasonNumber: Int)
+GET           /seasons/:seasonId                                                  controllers.Seasons.getSeasonById(seasonId: Long)
+GET           /shows/:showId/seasons                                              controllers.Seasons.getAllSeasonsForShow(showId: Long)
+GET           /shows/:showId/seasons/:seasonNumber                                controllers.Seasons.getSeasonForShow(showId: Long, seasonNumber: Int)
 
 # Episode
-GET     /shows/:showId/seasons/:seasonNumber/episodes                           controllers.Episodes.getAllEpisodesForShowAndSeason(showId: Long, seasonNumber: Int)
-GET     /shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber            controllers.Episodes.getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int)
-GET     /episodes/:episodeId                                                    controllers.Episodes.getEpisodeById(episodeId: Long)
+GET           /shows/:showId/seasons/:seasonNumber/episodes                       controllers.Episodes.getAllEpisodesForShowAndSeason(showId: Long, seasonNumber: Int)
+GET           /shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber        controllers.Episodes.getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int)
+GET           /episodes/:episodeId                                                controllers.Episodes.getEpisodeById(episodeId: Long)
 
 # Actors
-GET 	/actor/:actorId															controllers.Actors.getActorById(actorId: Long)
-GET     /actors/:actorId/shows                                                  controllers.Actors.getAllShowsForActor(actorId: Long)
-GET     /actors/search                                                          controllers.Actors.searchActor(name: String)
+GET           /actor/:actorId                                                     controllers.Actors.getActorById(actorId: Long)
+GET           /actors/:actorId/shows                                              controllers.Actors.getAllShowsForActor(actorId: Long)
+GET           /actors/search                                                      controllers.Actors.searchActor(name: String)
 
 # Networks
-GET 	/network/:networkId														controllers.Networks.getNetworkById( networkId: Long)
-GET     /networks/:networkId/shows                                              controllers.Networks.getAllShowsForNetwork(networkId: Long)
-GET     /networks/search                                                        controllers.Networks.searchNetwork(name: String)
+GET           /network/:networkId                                                 controllers.Networks.getNetworkById( networkId: Long)
+GET           /networks/:networkId/shows                                          controllers.Networks.getAllShowsForNetwork(networkId: Long)
+GET           /networks/search                                                    controllers.Networks.searchNetwork(name: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                                                           controllers.Assets.at(path="/public", file)
+GET           /assets/*file                                                       controllers.Assets.at(path="/public", file)

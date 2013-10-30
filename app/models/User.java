@@ -30,6 +30,8 @@ public class User extends Model {
     @JsonIgnore
     private AuthToken authToken;
 
+    private Settings settings = new Settings();
+
     @ManyToMany(cascade = {CascadeType.ALL})
     private Set<Show> shows;
 
@@ -74,8 +76,15 @@ public class User extends Model {
         this.authToken = authToken;
     }
 
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
 
     public static Finder<Long, User> find = new Finder<>(Long.class, User.class);
-
 
 }

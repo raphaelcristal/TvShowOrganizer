@@ -171,5 +171,17 @@ public class Test_Model_User {
         });
     }
 
+    @Test
+    public void defaultHideDescriptionSettingIsFalse() {
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+            public void run() {
+
+                User user = new User();
+                assertThat(user.getSettings().getHideDescriptions()).isFalse();
+
+            }
+        });
+    }
+
 
 }

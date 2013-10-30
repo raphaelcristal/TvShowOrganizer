@@ -32,6 +32,30 @@ public class Test_Routes_User {
         return user;
     }
 
+    @Test
+    public void updateSettingHideShowDescriptios() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                TestData.insertData();
+
+                User user = User.find.byId(1L);
+                user = getAuthenticatedUser(user);
+                AuthToken authToken = user.getAuthToken();
+
+                Result result = callAction(controllers.routes.ref.Users.updateHideDescriptions(1L, true));
+                assertThat(status(result)).isEqualTo(OK);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("hideDescriptions").getBooleanValue()).isTrue();
+
+            }
+        });
+
+    }
 
     @Test
     public void getShowsForAuthorizedUser() {

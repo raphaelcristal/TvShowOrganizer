@@ -1,22 +1,29 @@
 package controllers;
 
-import com.avaje.ebean.*;
-import play.db.*;
-import models.*;
+import com.avaje.ebean.ValidationException;
+import models.AuthToken;
 import models.JsonViews.ShowWithoutSeasonsNetworkActors;
+import models.Settings;
+import models.Show;
+import models.User;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.mindrot.jbcrypt.BCrypt;
 import play.Logger;
+import play.db.DB;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.persistence.PersistenceException;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 
 import static controllers.JsonHelper.JsonErrorMessage;
 import static controllers.Security.generateToken;
@@ -235,18 +242,18 @@ public class Users extends Controller {
             preparedStatement.execute();
 
             ResultSet resultSet = preparedStatement.getResultSet();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
 
                 ObjectNode objectNode = mapper.createObjectNode();
                 objectNode.put("show", resultSet.getString("show"));
-                if(resultSet.getString("airhour") != null) {
+                if (resultSet.getString("airhour") != null) {
                     objectNode.put("airhour", resultSet.getDate("airhour").getTime());
                 }
                 objectNode.put("network", resultSet.getString("network"));
                 objectNode.put("description", resultSet.getString("description"));
                 objectNode.put("number", resultSet.getInt("number"));
                 objectNode.put("title", resultSet.getString("title"));
-                if(resultSet.getString("airtime") != null) {
+                if (resultSet.getString("airtime") != null) {
                     objectNode.put("airtime", resultSet.getDate("airtime").getTime());
                 }
 
@@ -256,12 +263,26 @@ public class Users extends Controller {
 
             connection.close();
         } catch (SQLException e) {
-           return internalServerError(JsonErrorMessage("An error occurred. Please contact your administrator."));
+            return internalServerError(JsonErrorMessage("An error occurred. Please contact your administrator."));
         }
 
 
         return ok(toJson(arrayNode));
 
+    }
+
+    public static Result updateHideDescriptions(Long userId, boolean hideShowDescriptions) {
+
+        User user = User.find.byId(userId);
+
+        if (user == null) {
+            return ok(JsonErrorMessage("User does not exist."));
+        }
+
+        Settings settings = user.getSettings();
+        settings.setHideDescriptions(hideShowDescriptions);
+
+        return ok(toJson(settings));
     }
 
 
