@@ -8,7 +8,7 @@ GET           /setup                                                            
 
 # Users
 GET           /users/:userId/shows                                                controllers.Users.getShows(userId: Long)
-GET           /users/:userId/latestEpisodes                                       controllers.Users.latestEpisodes(userId: Long)
+GET           /users/:userId/latestEpisodes                                       controllers.Users.latestEpisodes(userId: Long, days: Int ?= 7)
 PUT           /users/:userId/shows/:showId                                        controllers.Users.subscribeUserToShow(userId: Long, showId: Long)
 DELETE        /users/:userId/shows/:showId                                        controllers.Users.unsubscribeUserFromShow(userId: Long, showId: Long)
 POST          /users                                                              controllers.Users.createUser(email: String, password: String)

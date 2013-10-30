@@ -198,7 +198,7 @@ public class Users extends Controller {
 
     }
 
-    public static Result latestEpisodes(Long userId) {
+    public static Result latestEpisodes(Long userId, int days) {
 
         Logger.debug("Dashboard for user with id: " + userId);
 
@@ -215,7 +215,7 @@ public class Users extends Controller {
         Calendar calendar = Calendar.getInstance();
 
         calendar.setTime(date);
-        calendar.add(Calendar.DATE, -7);
+        calendar.add(Calendar.DATE, -days);
 
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = mapper.createArrayNode();

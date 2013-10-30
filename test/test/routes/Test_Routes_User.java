@@ -682,7 +682,7 @@ public class Test_Routes_User {
                 AuthToken token = user.getAuthToken();
 
                 Result result = callAction(
-                        controllers.routes.ref.Users.latestEpisodes(user.getId()),
+                        controllers.routes.ref.Users.latestEpisodes(user.getId(), 7),
                         fakeRequest().withSession("token", "fakeToken")
                 );
 
@@ -708,7 +708,7 @@ public class Test_Routes_User {
 
                 User user = User.find.byId(1L);
 
-                Result result = callAction(controllers.routes.ref.Users.latestEpisodes(user.getId()));
+                Result result = callAction(controllers.routes.ref.Users.latestEpisodes(user.getId(), 7));
 
                 assertThat(status(result)).isEqualTo(UNAUTHORIZED);
 
@@ -734,7 +734,7 @@ public class Test_Routes_User {
                 AuthToken token = user.getAuthToken();
 
                 Result result = callAction(
-                        controllers.routes.ref.Users.latestEpisodes(user.getId()),
+                        controllers.routes.ref.Users.latestEpisodes(user.getId(), 7),
                         fakeRequest().withSession("token", token.getToken())
                 );
 
