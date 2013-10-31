@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name = "shows")
 public class Show extends Model {
 
     @Id

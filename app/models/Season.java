@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"number", "show_id"}))
+@Table(name = "seasons", uniqueConstraints = @UniqueConstraint(columnNames={"number", "show_id"}))
 public class Season extends Model {
 
     @Id

@@ -224,12 +224,12 @@ public class Users extends Controller {
                 + " sh.title as show, sh.airtime as airhour,"
                 + " ep.description as description, ep.number as number,"
                 + " ep.title as title, ep.airtime as airtime, ne.name as network "
-                + " FROM user u"
-                + " JOIN user_show us ON us.user_id = u.id"
-                + " JOIN show sh ON sh.id = us.show_id"
-                + " JOIN season se ON se.show_id = sh.id"
-                + " JOIN episode ep ON ep.season_id = se.id"
-                + " JOIN network ne ON ne.id = sh.network_id"
+                + " FROM users u"
+                + " JOIN users_shows us ON us.users_id = u.id"
+                + " JOIN shows sh ON sh.id = us.shows_id"
+                + " JOIN seasons se ON se.show_id = sh.id"
+                + " JOIN episodes ep ON ep.season_id = se.id"
+                + " JOIN networks ne ON ne.id = sh.network_id"
                 + " WHERE u.id = ?"
                 + " AND ep.airtime > ?";
 
