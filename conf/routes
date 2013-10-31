@@ -15,6 +15,8 @@ POST          /users                                                            
 GET           /users/authtoken                                                    controllers.Users.authenticateUser(email: String, password: String)
 PUT           /users/:userId/password                                             controllers.Users.updatePassword(userId: Long, oldPassword: String, newPassword: String)
 PUT           /users/:userId/settings/hideDescriptions                            controllers.Users.updateHideDescriptions(userId: Long, hideShowDescriptions: Boolean)
+PUT           /users/:userId/settings/passedDaysToShow                            controllers.Users.updatePassedDaysToShow(userId: Long, days: Int)
+
 # Shows
 GET           /shows                                                              controllers.Shows.getAllShows()
 GET           /shows/search                                                       controllers.Shows.searchShow(title: String)

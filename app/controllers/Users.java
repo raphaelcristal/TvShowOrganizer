@@ -285,6 +285,20 @@ public class Users extends Controller {
         return ok(toJson(settings));
     }
 
+    public static Result updatePassedDaysToShow(Long userId, int days) {
+
+        User user = User.find.byId(userId);
+
+        if (user == null) {
+            return ok(JsonErrorMessage("User does not exist."));
+        }
+
+        Settings settings = user.getSettings();
+        settings.setPassedDaysToShow(days);
+
+        return ok(toJson(settings));
+    }
+
 
 }
 

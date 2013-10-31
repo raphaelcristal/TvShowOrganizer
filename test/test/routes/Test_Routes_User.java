@@ -33,7 +33,7 @@ public class Test_Routes_User {
     }
 
     @Test
-    public void updateSettingHideShowDescriptios() {
+    public void updateSettingHideShowDescriptions() {
 
         running(fakeApplication(inMemoryDatabase()), new Runnable() {
 
@@ -51,6 +51,31 @@ public class Test_Routes_User {
                 JsonNode json = Json.parse(contentAsString(result));
 
                 assertThat(json.get("hideDescriptions").getBooleanValue()).isTrue();
+
+            }
+        });
+
+    }
+
+    @Test
+    public void updatePassedDaysToShowSetting() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                TestData.insertData();
+
+                User user = User.find.byId(1L);
+                user = getAuthenticatedUser(user);
+                AuthToken authToken = user.getAuthToken();
+
+                Result result = callAction(controllers.routes.ref.Users.updatePassedDaysToShow(1L, 20));
+                assertThat(status(result)).isEqualTo(OK);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("passedDaysToShow").getIntValue()).isEqualTo(20);
 
             }
         });
