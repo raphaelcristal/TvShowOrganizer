@@ -48,16 +48,6 @@ public class Shows extends Controller {
 
     }
 
-    public static Result getAllShows() throws IOException {
-
-        Logger.debug("Get all shows");
-
-        List<Show> shows = Show.find.all();
-        JsonNode jsonNode = removeSeasonsFromShow(shows);
-
-        return ok(toJson(jsonNode));
-    }
-
     public static Result searchShow(String title) {
 
         String searchTerm = "%" + title + "%";

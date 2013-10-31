@@ -4,41 +4,41 @@
 # --- !Ups
 
 create table actors (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   name                      varchar(255),
   constraint uq_actors_name unique (name),
   constraint pk_actors primary key (id))
 ;
 
 create table authTokens (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   token                     varchar(255),
-  active                    tinyint(1) default 0,
-  creation_date             datetime not null,
+  active                    boolean,
+  creation_date             timestamp not null,
   constraint uq_authTokens_token unique (token),
   constraint pk_authTokens primary key (id))
 ;
 
 create table episodes (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   season_id                 bigint not null,
   title                     varchar(255),
   number                    integer,
   description               Text,
-  airtime                   datetime,
+  airtime                   timestamp,
   constraint uq_episodes_1 unique (number,season_id),
   constraint pk_episodes primary key (id))
 ;
 
 create table networks (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   name                      varchar(255),
   constraint uq_networks_name unique (name),
   constraint pk_networks primary key (id))
 ;
 
 create table seasons (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   show_id                   bigint not null,
   number                    integer,
   constraint uq_seasons_1 unique (number,show_id),
@@ -46,12 +46,12 @@ create table seasons (
 ;
 
 create table settings (
-  hide_descriptions         tinyint(1) default 0,
+  hide_descriptions         boolean,
   passed_days_to_show       integer)
 ;
 
 create table shows (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   tvdb_id                   integer,
   title                     varchar(180),
   description               Text,
@@ -65,7 +65,7 @@ create table shows (
 ;
 
 create table users (
-  id                        bigint auto_increment not null,
+  id                        bigint not null,
   email                     varchar(120),
   password                  varchar(255),
   auth_token_id             bigint,
@@ -85,6 +85,20 @@ create table users_shows (
   shows_id                       bigint not null,
   constraint pk_users_shows primary key (users_id, shows_id))
 ;
+create sequence actors_seq;
+
+create sequence authTokens_seq;
+
+create sequence episodes_seq;
+
+create sequence networks_seq;
+
+create sequence seasons_seq;
+
+create sequence shows_seq;
+
+create sequence users_seq;
+
 alter table episodes add constraint fk_episodes_seasons_1 foreign key (season_id) references seasons (id) on delete restrict on update restrict;
 create index ix_episodes_seasons_1 on episodes (season_id);
 alter table seasons add constraint fk_seasons_shows_2 foreign key (show_id) references shows (id) on delete restrict on update restrict;
@@ -106,27 +120,41 @@ alter table users_shows add constraint fk_users_shows_shows_02 foreign key (show
 
 # --- !Downs
 
-SET FOREIGN_KEY_CHECKS=0;
+SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table actors;
+drop table if exists actors;
 
-drop table authTokens;
+drop table if exists authTokens;
 
-drop table episodes;
+drop table if exists episodes;
 
-drop table networks;
+drop table if exists networks;
 
-drop table seasons;
+drop table if exists seasons;
 
-drop table settings;
+drop table if exists settings;
 
-drop table shows;
+drop table if exists shows;
 
-drop table shows_actors;
+drop table if exists shows_actors;
 
-drop table users;
+drop table if exists users;
 
-drop table users_shows;
+drop table if exists users_shows;
 
-SET FOREIGN_KEY_CHECKS=1;
+SET REFERENTIAL_INTEGRITY TRUE;
+
+drop sequence if exists actors_seq;
+
+drop sequence if exists authTokens_seq;
+
+drop sequence if exists episodes_seq;
+
+drop sequence if exists networks_seq;
+
+drop sequence if exists seasons_seq;
+
+drop sequence if exists shows_seq;
+
+drop sequence if exists users_seq;
 

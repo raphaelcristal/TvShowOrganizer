@@ -18,7 +18,6 @@ PUT           /users/:userId/settings/hideDescriptions                          
 PUT           /users/:userId/settings/passedDaysToShow                            controllers.Users.updatePassedDaysToShow(userId: Long, days: Int)
 
 # Shows
-GET           /shows                                                              controllers.Shows.getAllShows()
 POST          /shows                                                              controllers.Shows.addShow(tvdbId: Int)
 GET           /shows/search                                                       controllers.Shows.searchShow(title: String)
 GET           /shows/search/tvdb                                                  controllers.Shows.searchShowOnTvdb(title: String)
