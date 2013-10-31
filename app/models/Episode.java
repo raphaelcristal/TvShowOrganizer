@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "episodes", uniqueConstraints = @UniqueConstraint(columnNames={"number", "season_id"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"number", "season_id"}))
 public class Episode extends Model {
 
     @Id
