@@ -221,7 +221,7 @@ public class Users extends Controller {
         ArrayNode arrayNode = mapper.createArrayNode();
 
         String sql = "SELECT"
-                + " sh.title as show, sh.airtime as airhour,"
+                + " sh.title as showTitle, sh.airtime as airhour,"
                 + " ep.description as description, ep.number as number,"
                 + " ep.title as title, ep.airtime as airtime, ne.name as network "
                 + " FROM users u"
@@ -245,9 +245,9 @@ public class Users extends Controller {
             while (resultSet.next()) {
 
                 ObjectNode objectNode = mapper.createObjectNode();
-                objectNode.put("show", resultSet.getString("show"));
+                objectNode.put("show", resultSet.getString("showTitle"));
                 if (resultSet.getString("airhour") != null) {
-                    objectNode.put("airhour", resultSet.getDate("airhour").getTime());
+                    objectNode.put("airhour", resultSet.getString("airhour"));
                 }
                 objectNode.put("network", resultSet.getString("network"));
                 objectNode.put("description", resultSet.getString("description"));
@@ -263,6 +263,7 @@ public class Users extends Controller {
 
             connection.close();
         } catch (SQLException e) {
+            Logger.error("An error occured while fetching the dashboard for user " + userId, e);
             return internalServerError(JsonErrorMessage("An error occurred. Please contact your administrator."));
         }
 
