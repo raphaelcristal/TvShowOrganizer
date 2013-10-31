@@ -14,7 +14,8 @@ object ApplicationBuild extends Build {
     "mysql" % "mysql-connector-java" % "5.1.25",
     "org.apache.httpcomponents" % "httpcomponents-client" % "4.2.5",
     "org.mindrot" % "jbcrypt" % "0.3m",
-    "org.mockito" % "mockito-all" % "1.9.0"
+    "org.mockito" % "mockito-all" % "1.9.0",
+    "com.fasterxml.jackson.dataformat" % "jackson-dataformat-xml" % "2.1.3"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

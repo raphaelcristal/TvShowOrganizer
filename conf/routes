@@ -19,7 +19,9 @@ PUT           /users/:userId/settings/passedDaysToShow                          
 
 # Shows
 GET           /shows                                                              controllers.Shows.getAllShows()
+POST          /shows                                                              controllers.Shows.addShow(tvdbId: Int)
 GET           /shows/search                                                       controllers.Shows.searchShow(title: String)
+GET           /shows/search/tvdb                                                  controllers.Shows.searchShowOnTvdb(title: String)
 GET           /shows/:showId                                                      controllers.Shows.getShow(showId: Long)
 
 # Seasons

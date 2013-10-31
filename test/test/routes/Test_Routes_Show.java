@@ -1,5 +1,6 @@
 package test.routes;
 
+import controllers.routes;
 import org.codehaus.jackson.JsonNode;
 import org.junit.Test;
 import play.libs.Json;
@@ -107,6 +108,28 @@ public class Test_Routes_Show {
 
                 assertThat(show.get("id").asLong()).isEqualTo(1L);
                 assertThat(show.get("title").asText()).isEqualTo("Die Simpsons");
+
+
+            }
+        });
+
+
+    }
+
+    @Test
+    public void addAnExistingShow() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                TestData.insertData();
+
+                Result result = callAction(routes.ref.Shows.addShow(1));
+                assertThat(status(result)).isEqualTo(OK);
+
+                JsonNode json = Json.parse(contentAsString(result));
+                assertThat(json.get("error").getTextValue()).isEqualTo("Show already exists.");
 
 
             }

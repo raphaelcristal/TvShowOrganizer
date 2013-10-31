@@ -16,6 +16,7 @@ public class TestData {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
             Show showSimpsons = new Show();
+            showSimpsons.setTvdbId(1);
             showSimpsons.setTitle("Die Simpsons");
             showSimpsons.setDescription("Die Simpsons ist eine von Matt Groening geschaffene, vielfach ausgezeichnete US-amerikanische Zeichentrickserie des Senders Fox. Sie ist die am längsten laufende US-Zeichentrickserie; bisher entstanden in 24 Staffeln über 530 Episoden");
 

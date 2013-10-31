@@ -3,15 +3,20 @@ package dataload.parsers;
 import com.google.common.collect.ImmutableList;
 import dataload.provider.TvdbProvider;
 import models.*;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import play.libs.WS;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static play.libs.F.Function;
+import static play.libs.F.Promise;
 
 public class TvdbParser extends AbstractShowParser {
 
@@ -94,6 +99,22 @@ public class TvdbParser extends AbstractShowParser {
         return shows;
     }
 
+    public Promise<Show> parseShowAsync(final int tvdbId) {
+
+        Promise<WS.Response> responsePromise = tvdbProvider.fetchShowAsync(tvdbId);
+
+        return responsePromise.map(new Function<WS.Response, Show>() {
+            public Show apply(WS.Response response) {
+                Document document = response.asXml();
+
+                Show show = new Show();
+
+                return parseShow(show, document.getDocumentElement());
+            }
+        });
+
+    }
+
     @Override
     public List<Show> parseShows() throws IOException, ParseException, ParserConfigurationException, SAXException {
 
@@ -121,9 +142,13 @@ public class TvdbParser extends AbstractShowParser {
 
     private Show parseShow(Show show, Element root) {
 
+        String id = root.getElementsByTagName("id").item(0).getTextContent();
+        String title = root.getElementsByTagName("SeriesName").item(0).getTextContent();
         String showDescription = root.getElementsByTagName("Overview").item(0).getTextContent();
         Day airday = Day.parseDay(root.getElementsByTagName("Airs_DayOfWeek").item(0).getTextContent());
         String airtime = root.getElementsByTagName("Airs_Time").item(0).getTextContent();
+        show.setTvdbId(Integer.valueOf(id));
+        show.setTitle(title);
         show.setDescription(showDescription.replace("\n", ""));
         show.setAirday(airday);
         show.setAirtime(airtime);

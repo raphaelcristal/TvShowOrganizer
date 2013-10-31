@@ -9,24 +9,30 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import play.Logger;
+import play.libs.WS;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Properties;
 
+import static play.libs.F.Promise;
+
 public class TvdbProvider {
 
-    private final static String SEARCH_URL = "http://thetvdb.com/api/GetSeries.php?seriesname=%s";
+    private final static String SEARCH_URL = "http://thetvdb.com/api/GetSeries.php";
     private final String updateUrlDay;
     private final String updateUrlWeek;
     private final String updateUrlMonth;
     private final String showUrl;
     private final String episodeUrl;
-    private final Properties titleIdMapping;
-    private final String titleIdMappingPath;
-    private final Frequency frequency;
+    private Properties titleIdMapping = null;
+    private String titleIdMappingPath = null;
+    private Frequency frequency = null;
 
     public enum Frequency {
         DAILY,
@@ -40,16 +46,29 @@ public class TvdbProvider {
      *
      * @param token your tvdb token
      */
-    public TvdbProvider(String token, String titleIdMappingPath, Frequency frequency) throws IOException {
-        this.titleIdMappingPath = titleIdMappingPath;
-        this.frequency = frequency;
-        this.titleIdMapping = new Properties();
-        this.titleIdMapping.load(new FileInputStream(titleIdMappingPath));
+    public TvdbProvider(String token) {
         this.updateUrlDay = String.format("http://thetvdb.com/api/%s/updates/updates_day.xml", token);
         this.updateUrlWeek = String.format("http://thetvdb.com/api/%s/updates/updates_week.xml", token);
         this.updateUrlMonth = String.format("http://thetvdb.com/api/%s/updates/updates_month.xml", token);
         this.showUrl = "http://thetvdb.com/api/" + token + "/series/%s/all/en.xml";
         this.episodeUrl = "http://thetvdb.com/api/" + token + "/episodes/%s/en.xml";
+    }
+
+    public TvdbProvider(String token, String titleIdMappingPath, Frequency frequency) throws IOException {
+        this(token);
+        this.titleIdMappingPath = titleIdMappingPath;
+        this.frequency = frequency;
+        this.titleIdMapping = new Properties();
+    }
+
+
+    public Promise<WS.Response> fetchShowAsync(int tvdbId) {
+        return WS.url(String.format(showUrl, tvdbId)).get();
+    }
+
+    public Promise<WS.Response> searchShowAsync(String title) {
+        Logger.debug(String.format(SEARCH_URL, title));
+        return WS.url(SEARCH_URL).setQueryParameter("seriesname", title).get();
     }
 
     /**
@@ -107,7 +126,7 @@ public class TvdbProvider {
     }
 
     private Document searchShows(String name) throws IOException, ParserConfigurationException, SAXException {
-        return fetchXml(String.format(SEARCH_URL, URLEncoder.encode(name, "UTF-8")));
+        return fetchXml(String.format(SEARCH_URL + "?seriesname=%s", URLEncoder.encode(name, "UTF-8")));
     }
 
     public Document fetchShow(Integer id) throws IOException, ParserConfigurationException, SAXException {

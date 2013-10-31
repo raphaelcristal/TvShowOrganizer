@@ -45,6 +45,11 @@ create table seasons (
   constraint pk_seasons primary key (id))
 ;
 
+create table settings (
+  hide_descriptions         tinyint(1) default 0,
+  passed_days_to_show       integer)
+;
+
 create table shows (
   id                        bigint auto_increment not null,
   tvdb_id                   integer,
@@ -112,6 +117,8 @@ drop table episodes;
 drop table networks;
 
 drop table seasons;
+
+drop table settings;
 
 drop table shows;
 
