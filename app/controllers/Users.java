@@ -283,6 +283,8 @@ public class Users extends Controller {
         Settings settings = user.getSettings();
         settings.setHideDescriptions(hideShowDescriptions);
 
+        user.save();
+
         return ok(toJson(settings));
     }
 
@@ -296,6 +298,8 @@ public class Users extends Controller {
 
         Settings settings = user.getSettings();
         settings.setPassedDaysToShow(days);
+
+        user.save();
 
         return ok(toJson(settings));
     }
