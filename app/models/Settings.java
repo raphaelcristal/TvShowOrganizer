@@ -1,9 +1,13 @@
 package models;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 public class Settings {
+
+    @Id
+    private Long id;
 
     private boolean hideDescriptions = false;
     private int passedDaysToShow = 7;
@@ -22,5 +26,13 @@ public class Settings {
 
     public void setPassedDaysToShow(int passedDaysToShow) {
         this.passedDaysToShow = passedDaysToShow;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

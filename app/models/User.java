@@ -30,6 +30,7 @@ public class User extends Model {
     @JsonIgnore
     private AuthToken authToken;
 
+    @OneToOne(cascade = {CascadeType.ALL})
     private Settings settings = new Settings();
 
     @ManyToMany(cascade = {CascadeType.ALL})
