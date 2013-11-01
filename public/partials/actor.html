@@ -1,11 +1,21 @@
-<div id="subscribed-shows" class="pure-u-1 container">
-    <h1>{{actorName}}</h1>
-    <div id="searched-shows" class="contentMargin">
-    	<div class="show clickable" data-ng-repeat="show in shows" data-ng-click="showDetails(show.id)">
-            <h2>{{show.title}}</h2>
-            <p>
-                {{show.description || 'No description available.'}}
-            </p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header text-center">
+                <h1>{{actorName}}</h1>
+            </div>
+        </div>
+    </div>
+    <div data-ng-repeat="show in shows" data-ng-click="showDetails(show.id)" class="clickable row">
+        <div class="col-md-12">
+            <div class="clickable panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{show.title}}</h3>
+                </div>
+                <div class="panel-body">
+                    {{show.description || 'No description available.'}}
+                </div>
+            </div>
         </div>
     </div>
 </div>

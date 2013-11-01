@@ -1,34 +1,36 @@
-<div class="container pure-u-1">
-    <h1>API</h1>
-    <div class="contentMargin">
-        <p>This page describes the RESTFul api used by TvShowOrganizer. There is no request limit but please don't abuse the API. All params have to be url encoded! Using forms with the payload in the body for POST routes won't work!</p>
-    
+<div class="container">
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header text-center">
+            <h1>API</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="well">
+            <p>This page describes the RESTFul api used by TvShowOrganizer. There is no request limit but please don't
+                abuse the API. All params have to be url encoded! Using forms with the payload in the body for POST
+                routes won't work!</p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
         <h2>Shows</h2>
-        <table class="pure-table pure-table-bordered pure-table-striped">
-            <thead>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <th width="60">Method</th>
+                    <th>Method</th>
                     <th>Url</th>
                     <th>Params</th>
                     <th>Example</th>
                     <th>Response</th>
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>GET</td>
-                    <td>/shows</td>
-                    <td>None</td>
-                    <td><a href="/shows">/shows</a></td>
-                    <td>Returns all shows without seasons and episodes. This route will return a lot of data!</td>
-                </tr>
-                <tr>
-                    <td>GET</td>
-                    <td>/shows/search</td>
-                    <td>title</td>
-                    <td><a href="/shows/search?title=futurama">/shows/search?title=futurama</a></td>
-                    <td>Returns all shows with matching title. The search is implemented by using a like constraint in SQL, so searching for 'Futu' will still find Futurama.</td>
-                </tr>
+                </thead>
+                <tbody>
                 <tr>
                     <td>GET</td>
                     <td>/shows/:showId</td>
@@ -36,201 +38,274 @@
                     <td><a href="/shows/3829">/shows/3829</a></td>
                     <td>Returns the complete information for a show.</td>
                 </tr>
-            </tbody>
-        </table>
-    
-        <h2>Seasons</h2>
-        <table class="pure-table pure-table-bordered pure-table-striped">
-        <thead>
-            <tr>
-                <th width="60">Method</th>
-                <th>Url</th>
-                <th>Params</th>
-                <th>Example</th>
-                <th>Response</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>GET</td>
-                <td>/seasons/:seasonId</td>
-                <td>None</td>
-                <td><a href="/seasons/60927">/seasons/60927</a></td>
-                <td>Returns the complete information for a season.</td>
-            </tr>
-            <tr>
-                <td>GET</td>
-                <td>/shows/:showId/seasons</td>
-                <td>None</td>
-                <td><a href="/shows/3829/seasons">/shows/3829/seasons</a></td>
-                <td>Get all seasons for a show.</td>
-            </tr>
-            <tr>
-                <td>GET</td>
-                <td>/shows/:showId/seasons/:seasonNumber</td>
-                <td>None</td>
-                <td><a href="/shows/3829/seasons">/shows/3829/seasons/1</a></td>
-                <td>Get the nth season for a show.</td>
-            </tr>
-        </tbody>
-        </table>
-
-        <h2>Episodes</h2>
-        <table class="pure-table pure-table-bordered pure-table-striped">
-        <thead>
-        <tr>
-            <th width="60">Method</th>
-            <th>Url</th>
-            <th>Params</th>
-            <th>Example</th>
-            <th>Response</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>GET</td>
-            <td>/episodes/:episodeId</td>
-            <td>None</td>
-            <td><a href="/episodes/389149">/episodes/389149</a></td>
-            <td>Get an episode by id.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
-            <td>/shows/:showId/seasons/:seasonNumber/episodes</td>
-            <td>None</td>
-            <td><a href="/shows/3829/seasons/1/episodes">/shows/3829/easons/1/episodes</a></td>
-            <td>Returns all episodes for a given showId and seasonNumber.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
-            <td>/shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber </td>
-            <td>None</td>
-            <td><a href="/shows/3829/seasons/1/episodes/5">/shows/3829/seasons/1/episodes/5</a></td>
-            <td>Get the nth episode for a a season.</td>
-        </tr>
-        </tbody>
-        </table>
-        
-        <h2>Users</h2>
-        <table class="pure-table pure-table-bordered pure-table-striped">
-        <thead>
-        <tr>
-            <th width="60">Method</th>
-            <th>Url</th>
-            <th>Params</th>
-            <th>Example</th>
-            <th>Response</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>POST</td>
-            <td>/users</td>
-            <td>email, password</td>
-            <td>/users?email=foo@bar.de&password=secret</td>
-            <td>Create a new user. Password has to be at least a length of 5.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
-            <td>/users/authtoken</td>
-            <td>email, password</td>
-            <td>/users/authtoken?email=foo@bar.de&password=secret</td>
-            <td>Authenticate a user.</td>
-        </tr>
-        <tr>
-            <td>PUT</td>
-            <td>/users/:userId/password</td>
-            <td>oldPassword, newPassword</td>
-            <td>/users/1/password?ldPassword=old&newPassword=new</td>
-            <td>Change the user's password.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
-            <td>/users/:userId/shows</td>
-            <td>None</td>
-            <td><a href="/users/1/shows">/users/1/shows</a></td>
-            <td>Get all shows to which a user is subscribed to. Needs authentication and auhorization.</td>
-        </tr>
-        <tr>
-            <td>GET</td>
-            <td>/users/:userId/latestEpisodes</td>
-            <td>None</td>
-            <td><a href="/users/1/latestEpisodes">/users/1/latestEpisodes</a></td>
-            <td>Returns all episodes of the last week and episodes which didn't run yet for every subscribed show. Needs authentication and authorizaion.</td>
-        </tr>
-        <tr>
-            <td>PUT</td>
-            <td>/users/:userId/shows/:showId</td>
-            <td>None</td>
-            <td>/users/1/shows/3829</td>
-            <td>Subscribe to a show. Needs authentication and authorization.</td>
-        </tr>
-        <tr>
-            <td>DELETE</td>
-            <td>/users/:userId/shows/:showId</td>
-            <td>None</td>
-            <td>/users/1/shows/3829</td>
-            <td>Unsubscribe to a show. Needs authentication and authorization.</td>
-        </tr>
-        </tbody>
-        </table>
-
-        <h2>Actors</h2>
-        <table class="pure-table pure-table-bordered pure-table-striped">
-            <thead>
-            <tr>
-                <th width="60">Method</th>
-                <th>Url</th>
-                <th>Params</th>
-                <th>Example</th>
-                <th>Response</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>GET</td>
-                <td>/actors/:actorId/shows</td>
-                <td>None</td>
-                <td><a href="/actors/1067/shows">/actors/1067/shows</a></td>
-                <td>Returns all shows for an actor.</td>
-            </tr>
-            <tr>
-                <td>GET</td>
-                <td>/actors/search</td>
-                <td>name</td>
-                <td><a href="/actors/search?name=Lauren Tom">/actors/search?name=Lauren Tom</a></td>
-                <td>Search for actor by name.</td>
-            </tr>
-            </tbody>
-        </table>
-        <h2>Networks</h2>
-        <table class="pure-table pure-table-bordered pure-table-striped">
-            <thead>
-            <tr>
-                <th width="60">Method</th>
-                <th>Url</th>
-                <th>Params</th>
-                <th>Example</th>
-                <th>Response</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>GET</td>
-                <td>/networks/:networkId/shows</td>
-                <td>None</td>
-                <td><a href="/networks/62/shows">/networks/62/shows</a></td>
-                <td>Returns all shows for a network.</td>
-            </tr>
-            <tr>
-                <td>GET</td>
-                <td>/networks/search</td>
-                <td>name</td>
-                <td><a href="/networks/search?name=Comedy Central">/networks/search?name=Comedy Central</a></td>
-                <td>Search for actor by name.</td>
-            </tr>
-            </tbody>
-        </table>
-
+                <tr>
+                    <td>GET</td>
+                    <td>/shows/search</td>
+                    <td>title</td>
+                    <td><a href="/shows/search?title=futurama">/shows/search?title=futurama</a></td>
+                    <td>Returns all shows with matching title. The search is implemented by using a like constraint in
+                        SQL, so searching for 'Futu' will still find Futurama.
+                    </td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/shows/search/tvdb</td>
+                    <td>title</td>
+                    <td><a href="/shows/search/tvdb?title=futurama">/shows/search/tvdb?title=futurama</a></td>
+                    <td>Searches the tvdb for a show. You will need the id to import a missing show into
+                        TVShowOrganizer.
+                    </td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>/shows</td>
+                    <td>tvdbId</td>
+                    <td><a href="/shows?tvdbId=123">/shows?tvdbId=123</a></td>
+                    <td>Import a show into TVShowOrganizer.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Seasons</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Url</th>
+                    <th>Params</th>
+                    <th>Example</th>
+                    <th>Response</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>/seasons/:seasonId</td>
+                    <td>None</td>
+                    <td><a href="/seasons/60927">/seasons/60927</a></td>
+                    <td>Returns the complete information for a season.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/shows/:showId/seasons</td>
+                    <td>None</td>
+                    <td><a href="/shows/3829/seasons">/shows/3829/seasons</a></td>
+                    <td>Get all seasons for a show.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/shows/:showId/seasons/:seasonNumber</td>
+                    <td>None</td>
+                    <td><a href="/shows/3829/seasons">/shows/3829/seasons/1</a></td>
+                    <td>Get the nth season for a show.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Episodes</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Url</th>
+                    <th>Params</th>
+                    <th>Example</th>
+                    <th>Response</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>/episodes/:episodeId</td>
+                    <td>None</td>
+                    <td><a href="/episodes/389149">/episodes/389149</a></td>
+                    <td>Get an episode by id.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/shows/:showId/seasons/:seasonNumber/episodes</td>
+                    <td>None</td>
+                    <td><a href="/shows/3829/seasons/1/episodes">/shows/3829/easons/1/episodes</a></td>
+                    <td>Returns all episodes for a given showId and seasonNumber.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/shows/:showId/seasons/:seasonNumber/episodes/:episodeNumber</td>
+                    <td>None</td>
+                    <td><a href="/shows/3829/seasons/1/episodes/5">/shows/3829/seasons/1/episodes/5</a></td>
+                    <td>Get the nth episode for a a season.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Users</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Url</th>
+                    <th>Params</th>
+                    <th>Example</th>
+                    <th>Response</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>POST</td>
+                    <td>/users</td>
+                    <td>email, password</td>
+                    <td>/users?email=foo@bar.de&password=secret</td>
+                    <td>Create a new user. Password has to be at least a length of 5.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/users/authtoken</td>
+                    <td>email, password</td>
+                    <td>/users/authtoken?email=foo@bar.de&password=secret</td>
+                    <td>Authenticate a user.</td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>/users/:userId/password</td>
+                    <td>oldPassword, newPassword</td>
+                    <td>/users/1/password?ldPassword=old&newPassword=new</td>
+                    <td>Change the user's password.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/users/:userId/shows</td>
+                    <td>None</td>
+                    <td><a href="/users/1/shows">/users/1/shows</a></td>
+                    <td>Get all shows to which a user is subscribed to. Needs authentication and auhorization.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/users/:userId/latestEpisodes</td>
+                    <td>days</td>
+                    <td><a href="/users/1/latestEpisodes?10">/users/1/latestEpisodes?10</a></td>
+                    <td>Returns all episodes of the last n days, default is seven, and episodes which didn't run yet for
+                        every subscribed show. Needs authentication and authorizaion.
+                    </td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>/users/:userId/shows/:showId</td>
+                    <td>None</td>
+                    <td>/users/1/shows/3829</td>
+                    <td>Subscribe to a show. Needs authentication and authorization.</td>
+                </tr>
+                <tr>
+                    <td>DELETE</td>
+                    <td>/users/:userId/shows/:showId</td>
+                    <td>None</td>
+                    <td>/users/1/shows/3829</td>
+                    <td>Unsubscribe to a show. Needs authentication and authorization.</td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>/users/:userId/settings/hideDescriptions</td>
+                    <td>hideShowDescriptions</td>
+                    <td>/users/1/settings/hideDescriptions?hideShowDescriptions=true</td>
+                    <td>Save user setting, if he would like to show or hide the show recaps in the dashboard</td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>/users/:userId/settings/passedDaysToShow</td>
+                    <td>days</td>
+                    <td>/users/1/settings/passedDaysToShow?days=2</td>
+                    <td>Save user setting for how many passed days should be included in the dashboard</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Actors</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Url</th>
+                    <th>Params</th>
+                    <th>Example</th>
+                    <th>Response</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>/actors/:actorId/shows</td>
+                    <td>None</td>
+                    <td><a href="/actors/1067/shows">/actors/1067/shows</a></td>
+                    <td>Returns all shows for an actor.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/actors/search</td>
+                    <td>name</td>
+                    <td><a href="/actors/search?name=Lauren Tom">/actors/search?name=Lauren Tom</a></td>
+                    <td>Search for actor by name.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Networks</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Url</th>
+                    <th>Params</th>
+                    <th>Example</th>
+                    <th>Response</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>/networks/:networkId/shows</td>
+                    <td>None</td>
+                    <td><a href="/networks/62/shows">/networks/62/shows</a></td>
+                    <td>Returns all shows for a network.</td>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/networks/search</td>
+                    <td>name</td>
+                    <td><a href="/networks/search?name=Comedy Central">/networks/search?name=Comedy Central</a></td>
+                    <td>Search for actor by name.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </div>

@@ -1,23 +1,67 @@
-<div id="subscribed-shows" class="pure-u-1 container">
-    <h1>Search Shows</h1>
-    <div class="contentMargin">
-        
-        <form class="pure-form search-form">
-            <div class="input-append">
-                <input type="text" ng-model="showName" class="pure-input-rounded pure-u-1-3">
-                <button type="submit" class="pure-button pure-button-primary pure-button-small" ng-click="searchShowsByName(showName)">Search</button>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header text-center">
+                <h1>Search Shows</h1>
             </div>
-        </form>
-
-        <div data-ng-show="info">
-            <h2>{{info}}</h2>
         </div>
-        <div class="episode clickable" data-ng-click="showDetails(show.id)" data-ng-repeat="show in searchedShows">
-            <button class="pure-button pure-button-success pull-right pure-button-xsmall" data-ng-click="subscribe(show.id); $event.stopPropagation();" data-ng-hide="isSubscribed(show.id)">Subscribe</button>
-            <h2>{{ show.title }}</h2>
-            <p>
-                {{show.description || 'No description available.'}}
-            </p>
+    </div>
+    <div class="row search-shows">
+        <div class="col-lg-6">
+            <div class="input-group">
+                <input data-ng-model="showName" type="text" class="form-control" required>
+                <span class="input-group-btn">
+                    <button data-ng-click="searchShowsByName(showName)" class="btn btn-primary" type="button">Search
+                    </button>
+                 </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <p>{{info}}</p>
+        </div>
+    </div>
+    <div data-ng-repeat="show in searchedShows" class="row">
+        <div class="col-md-12">
+            <div data-ng-click="showDetails(show.id)" class="clickable panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <div class="panel-title">
+                            <button data-ng-click="subscribe(show.id); $event.stopPropagation();"
+                                    data-ng-hide="isSubscribed(show.id)" class="btn btn-success pull-right">Subscribe
+                            </button>
+                            <span data-ng-show="isSubscribed(show.id)" class="pull-right glyphicon glyphicon-ok"></span>
+                            <b>{{show.title}}</b>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {{show.description || 'No description available.'}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-ng-repeat="show in searchedShowsTvdb" class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <div class="panel-title">
+                            <button data-ng-click="importShow(show); $event.stopPropagation();"
+                                    data-ng-hide="show.isSubscribed" class="btn btn-success pull-right">Subscribe
+                            </button>
+                            <span data-ng-show="show.isSubscribed" class="pull-right glyphicon glyphicon-ok"></span>
+                            <b>{{show.SeriesName}}</b>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {{show.Overview || 'No description available.'}}
+                </div>
+            </div>
         </div>
     </div>
 </div>

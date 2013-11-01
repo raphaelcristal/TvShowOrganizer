@@ -1,45 +1,58 @@
+<!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="Raphael Brand">
+        <link rel="shortcut icon" href="favicon.png">
+
         <title>TVShowOrganizer</title>
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/pure-min.css")">
+
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/tvshoworganizer.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     </head>
     <body data-ng-app="tvshoworganizer">
-        <div class="pure-g-r">
-            <div class="header pure-u-1" data-ng-controller="TopbarCtrl">
-                <div class="pure-menu pure-menu-open pure-menu-fixed pure-menu-horizontal">
-                    <a class="pure-menu-heading" href="#/">TV Show Organizer</a>
-                    <ul>
+        <div data-ng-controller="TopbarCtrl" class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/#">TVShowOrganizer</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
                         <li data-ng-class="selectedClass('api')"><a href="#/api">API</a></li>
                         <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('dashboard')"><a href="#/dashboard">Dashboard</a></li>
-                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('organize')"><a href="#/organize">Organize</a></li>
+                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('subscriptions')"><a href="#/subscriptions">Subscriptions</a></li>
                         <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('shows')"><a href="#/shows">Shows</a></li>
-                        <li data-ng-show="isLoggedIn()"data-ng-class="selectedClass('profile')"><a href="#/profile">Profile</a></li>
+                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('settings')"><a href="#/settings">Settings</a></li>
                     </ul>
-                    <ul id="logoutForm" class="pull-right" data-ng-show="isLoggedIn()">
-                        <li>
-                            <button style="margin-top: 1px;" class="pure-button pure-button-error " data-ng-click="logOut()">Logout</button>
-                        </li>
-                    </ul>
-                    <ul id="loginForm" data-ng-hide="isLoggedIn()" class="pull-right">
-                        <li>
-                            <form class="pure-form" ng-submit="logIn(user.email, user.password)">
-                                <input type="email" placeholder="Email" class="pure-input-rounded pure-input-xsmall" data-ng-model="user.email" required>
-                                <input type="password" placeholder="Password" class="pure-input-rounded pure-input-xsmall" data-ng-model="user.password" required>
-                                <button type="submit" class="pure-button pure-button-success ">Sign in</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-                <div data-ng-show="flashErrorMessage()" id="flashErrorMessage">{{flashErrorMessage()}}</div>
-                <div data-ng-show="flashSuccessMessage()" id="flashSuccessMessage">{{flashSuccessMessage()}}</div>
+                    <form data-ng-hide="isLoggedIn()" ng-submit="logIn(user.email, user.password)" class="navbar-form navbar-right">
+                        <div class="form-group">
+                            <input data-ng-model="user.email" type="email" placeholder="Email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <input data-ng-model="user.password" type="password" placeholder="Password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Sign in</button>
+                    </form>
+                    <form data-ng-show="isLoggedIn()" class="navbar-form navbar-right">
+                        <button data-ng-click="logOut()" class="btn btn-danger pull-right">Log out</button>
+                    </form>
+                </div> <!--/.navbar-collapse -->
             </div>
-        <ng-view></ng-view>
         </div>
+        <ng-view></ng-view>
         <script src="@routes.Assets.at("javascripts/angular.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/jquery-1.10.2.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/jquery.bootstrap-growl.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/lodash.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/tvshoworganizer.js")" type="text/javascript"></script>
     </body>

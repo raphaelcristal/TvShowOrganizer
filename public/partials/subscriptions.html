@@ -1,0 +1,29 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header text-center">
+                <h1>Subscriptions</h1>
+            </div>
+        </div>
+    </div>
+    <div data-ng-repeat="show in shows()" class="row">
+        <div class="col-md-12">
+            <div data-ng-click="showDetails(show.id)" class="clickable panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <div class="panel-title">
+                            <button data-ng-click="unSubscribe(show.id); $event.stopPropagation();"
+                                    class="btn btn-danger pull-right">Unsubscribe
+                            </button>
+                            <b>{{show.title}}</b>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {{show.description || 'No description available.'}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
