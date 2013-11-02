@@ -11,7 +11,8 @@
             <div class="input-group">
                 <input data-ng-model="showName" type="text" class="form-control" required>
                 <span class="input-group-btn">
-                    <button data-ng-click="searchShowsByName(showName)" class="btn btn-primary" type="button">Search
+                    <button data-ng-class="{disabled: isSearching}" data-ng-click="searchShowsByName(showName)"
+                            class="btn btn-primary" type="button">{{isSearching && 'Searching...' || 'Search'}}
                     </button>
                  </span>
             </div>
@@ -20,6 +21,14 @@
     <div class="row">
         <div class="col-lg-6">
             <p>{{info}}</p>
+        </div>
+    </div>
+    <div data-ng-show="showTvdbInformation" class="row">
+        <div class="col-lg-12">
+            <div class="well">
+                <h4>Did not find what you were looking for? Click <a data-ng-click="searchShowOnTvdb(showName)">here</a>
+                    to search the tvdb!</h4>
+            </div>
         </div>
     </div>
     <div data-ng-repeat="show in searchedShows" class="row">
@@ -50,7 +59,9 @@
                     <div class="panel-title">
                         <div class="panel-title">
                             <button data-ng-click="importShow(show); $event.stopPropagation();"
-                                    data-ng-hide="show.isSubscribed" class="btn btn-success pull-right">Subscribe
+                                    data-ng-class="{disabled: show.isSubscribing}"
+                                    data-ng-hide="show.isSubscribed" class="btn btn-success pull-right">
+                                {{show.isSubscribing && 'Subscribing...' || 'Subscribe'}}
                             </button>
                             <span data-ng-show="show.isSubscribed" class="pull-right glyphicon glyphicon-ok"></span>
                             <b>{{show.SeriesName}}</b>

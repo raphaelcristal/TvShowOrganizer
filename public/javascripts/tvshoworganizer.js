@@ -82,7 +82,7 @@ angular
                     User.logOut();
                     $location.path('/');
                 }
-                FlashMessenger.showErrorMessage(response.data.error);
+                FlashMessenger.showErrorMessage(response.data.error || 'Something went wrong.');
                 return $q.reject(response);
             };
 
@@ -265,12 +265,15 @@ angular
         $scope.searchedShows = [];
         $scope.searchedShowsTvdb = [];
         $scope.info = '';
+        $scope.isSearching = false;
+        $scope.showTvdbInformation = false;
 
         $scope.searchShowOnTvdb = function (query) {
-
+            $scope.showTvdbInformation = false;
             $http
                 .get('/shows/search/tvdb', {params: {title: query}})
                 .success(function (shows) {
+                    $scope.isSearching = false;
                     if (shows.length > 0) {
                         $scope.searchedShowsTvdb = shows;
                     } else {
@@ -281,11 +284,13 @@ angular
         };
 
         $scope.searchShowsByName = function (query) {
-
+            $scope.isSearching = true;
             $http
                 .get('/shows/search', {params: {title: query}})
                 .success(function (shows) {
                     if (shows.length > 0) {
+                        $scope.isSearching = false;
+                        $scope.showTvdbInformation = true;
                         $scope.searchedShowsTvdb = [];
                         $scope.searchedShows = shows;
                         $scope.info = '';
@@ -297,11 +302,13 @@ angular
         };
 
         $scope.importShow = function (show) {
+            show.isSubscribing = true;
             $http({
                 url: '/shows',
                 method: 'POST',
                 params: {tvdbId: show.seriesid}
             }).success(function (data) {
+                    show.isSubscribing = false;
                     if (!data.error) {
                         show.isSubscribed = true;
                         $scope.subscribe(data.id);
