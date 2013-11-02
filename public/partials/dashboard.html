@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <div data-ng-repeat="episode in latestEpisodes" class="row">
+    <div data-ng-repeat="episode in latestEpisodes | orderBy:'airtime'" class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
