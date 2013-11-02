@@ -222,7 +222,7 @@ public class Users extends Controller {
 
         String sql = "SELECT"
                 + " sh.title as showTitle, sh.airtime as airhour,"
-                + " ep.description as description, ep.number as number,"
+                + " ep.description as description, ep.number as number, se.number as season,"
                 + " ep.title as title, ep.airtime as airtime, ne.name as network "
                 + " FROM users u"
                 + " JOIN users_shows us ON us.users_id = u.id"
@@ -252,6 +252,7 @@ public class Users extends Controller {
                 objectNode.put("network", resultSet.getString("network"));
                 objectNode.put("description", resultSet.getString("description"));
                 objectNode.put("number", resultSet.getInt("number"));
+                objectNode.put("season", resultSet.getInt("season"));
                 objectNode.put("title", resultSet.getString("title"));
                 if (resultSet.getString("airtime") != null) {
                     objectNode.put("airtime", resultSet.getDate("airtime").getTime());

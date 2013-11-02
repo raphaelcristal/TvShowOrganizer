@@ -119,6 +119,16 @@ angular
 
         };
     })
+    .filter('leadingZero', function () {
+
+        return function (number) {
+
+            if (number === 0) return number;
+            if (number < 10) return '0' + number;
+            return number;
+
+        };
+    })
     .factory('FlashMessenger', function () {
 
         return {

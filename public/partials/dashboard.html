@@ -19,7 +19,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <h3 class="panel-title">{{episode.show}} - {{episode.title}} - EP{{episode.number}}
+                        <h3 class="panel-title">{{episode.show}} - {{episode.title}} - S{{episode.season |
+                            leadingZero}}E{{episode.number | leadingZero}}
                             <span data-ng-class="{true:'label-danger', false:'label-info'}[hasRun(episode)]"
                                   class="label pull-right">{{episode.airtime | fromTimestamp}} on {{episode.network}} at {{episode.airhour}}</span>
                         </h3>
