@@ -1,6 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import dataload.DataLoad;
 import dataload.parsers.TvdbParser;
 import dataload.provider.TvdbProvider;
 import models.JsonViews.ShowWithoutSeasonsNetworkActors;
@@ -14,6 +15,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static controllers.JsonHelper.JsonErrorMessage;
@@ -91,7 +93,9 @@ public class Shows extends Controller {
         Promise<Result> result = showPromise.map(new Function<Show, Result>() {
             public Result apply(Show show) {
                 try {
-                    show.save();
+                    List<Show> shows = new ArrayList<>();
+                    shows.add(show);
+                    new DataLoad().importShows(shows);
                 } catch (Exception e) {
                     Logger.error("Error while importing new show", e);
                     return ok(JsonErrorMessage("An error occured."));

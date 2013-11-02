@@ -67,7 +67,6 @@ public class TvdbProvider {
     }
 
     public Promise<WS.Response> searchShowAsync(String title) {
-        Logger.debug(String.format(SEARCH_URL, title));
         return WS.url(SEARCH_URL).setQueryParameter("seriesname", title).get();
     }
 

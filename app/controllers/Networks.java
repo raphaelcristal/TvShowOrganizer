@@ -17,7 +17,7 @@ public class Networks extends Controller {
 
     public static Result getAllShowsForNetwork(Long networkId) {
 
-        Logger.debug("Get network with id:" + networkId);
+        Logger.debug("Get shows for network with id:" + networkId);
 
         Set<Show> shows = Show.find.where().eq("network.id", networkId).findSet();
 
@@ -27,9 +27,9 @@ public class Networks extends Controller {
         return ok(toJson(mapper.valueToTree(shows)));
     }
 
-    public static Result getNetworkById( Long networkId ) {
+    public static Result getNetworkById(Long networkId) {
 
-        Logger.debug("Get network with id: " + networkId);
+        Logger.debug("Get network by id:" + networkId);
 
         Network network = Network.find.byId(networkId);
 
@@ -43,7 +43,7 @@ public class Networks extends Controller {
     public static Result searchNetwork(String name) {
 
         Logger.debug("Searching network with name " + name);
-        String searchTerm = "%" + name + "%" ;
+        String searchTerm = "%" + name + "%";
         Set<Network> networks = Network.find.where().ilike("name", searchTerm).findSet();
 
         return ok(toJson(networks));

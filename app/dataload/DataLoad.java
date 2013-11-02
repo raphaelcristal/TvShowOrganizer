@@ -30,6 +30,18 @@ public class DataLoad {
     }
 
     /**
+     * Use this constructor if you don't want to load from an external ressource but supply
+     * the show objects yourself
+     */
+    public DataLoad() {
+        this(null);
+    }
+
+    public void importShows(List<Show> shows) {
+        insertIntoDatabase(shows);
+    }
+
+    /**
      * Run this method to start the initial dataload on an empty database.
      */
     public void importShows() {
