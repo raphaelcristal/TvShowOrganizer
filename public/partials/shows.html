@@ -9,7 +9,8 @@
     <div class="row search-shows">
         <div class="col-lg-6">
             <div class="input-group">
-                <input data-ng-model="showName" type="text" class="form-control" required>
+                <input data-ng-enter="searchShowsByName(showName)" data-ng-model="showName" type="text"
+                       class="form-control" required>
                 <span class="input-group-btn">
                     <button data-ng-class="{disabled: isSearching}" data-ng-click="searchShowsByName(showName)"
                             class="btn btn-primary" type="button">{{isSearching && 'Searching...' || 'Search'}}
