@@ -5,6 +5,7 @@
 # Home page
 GET           /                                                                   controllers.Application.index()
 GET           /setup                                                              controllers.Application.setUp(fromFilesOnly: Boolean ?= true)
+GET           /update                                                             controllers.Application.update()
 
 # Users
 GET           /users/:userId/shows                                                controllers.Users.getShows(userId: Long)

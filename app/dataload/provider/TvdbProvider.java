@@ -54,10 +54,14 @@ public class TvdbProvider {
         this.episodeUrl = "http://thetvdb.com/api/" + token + "/episodes/%s/en.xml";
     }
 
-    public TvdbProvider(String token, String titleIdMappingPath, Frequency frequency) throws IOException {
+    public TvdbProvider(String token, Frequency frequency) {
         this(token);
-        this.titleIdMappingPath = titleIdMappingPath;
         this.frequency = frequency;
+    }
+
+    public TvdbProvider(String token, String titleIdMappingPath, Frequency frequency) throws IOException {
+        this(token, frequency);
+        this.titleIdMappingPath = titleIdMappingPath;
         this.titleIdMapping = new Properties();
     }
 
