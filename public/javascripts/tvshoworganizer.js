@@ -15,7 +15,8 @@ angular
                 controller: 'DashboardCtrl',
                 resolve: {
                     latestEpisodesRequest: function ($http, User) {
-                        return $http.get('/users/' + User.getUserId() + '/latestEpisodes');
+                        return $http.get('/users/' + User.getUserId() + '/latestEpisodes',
+                            {params: {days: User.getUser().settings.passedDaysToShow}});
                     }
                 }
             })
@@ -234,11 +235,15 @@ angular
     })
     .controller('DashboardCtrl', function ($scope, User, latestEpisodesRequest) {
 
+        $scope.hasRun = function (episode) {
+            return new Date(episode.airtime) < new Date();
+        }
+
         $scope.latestEpisodes = latestEpisodesRequest.data;
 
         $scope.userShows = User.getShows;
 
-        $scope.settings = User.settings;
+        $scope.settings = User.getUser().settings;
 
     })
     .controller('SubscriptionCtrl', function ($scope, $location, $http, User) {
