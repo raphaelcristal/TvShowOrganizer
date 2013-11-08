@@ -8,6 +8,7 @@ GET           /setup                                                            
 GET           /update                                                             controllers.Application.update()
 
 # Users
+GET           /users/logOut                                                       controllers.Users.destroySession()
 GET           /users/:userId/shows                                                controllers.Users.getShows(userId: Long)
 GET           /users/:userId/latestEpisodes                                       controllers.Users.latestEpisodes(userId: Long, days: Int ?= 7)
 PUT           /users/:userId/shows/:showId                                        controllers.Users.subscribeUserToShow(userId: Long, showId: Long)

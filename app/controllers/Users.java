@@ -124,6 +124,13 @@ public class Users extends Controller {
 
     }
 
+    public static Result destroySession() {
+
+        session().clear();
+
+        return ok();
+    }
+
     public static Result updatePassword(Long userId, String oldPassword, String newPassword) {
 
         Logger.debug("Updating password for user with ID = " + userId);

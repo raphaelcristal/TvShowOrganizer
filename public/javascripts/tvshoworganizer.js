@@ -244,8 +244,10 @@ angular
 
         $scope.logOut = function () {
 
-            $location.path('/');
-            User.logOut();
+            $http.get('/users/logOut').success(function () {
+                $location.path('/');
+                User.logOut();
+            });
 
         };
 
