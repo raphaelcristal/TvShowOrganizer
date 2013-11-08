@@ -12,7 +12,7 @@
                 <div class="form-group">
                     <label for="lastDays">How many passed days would you like to be included in your dashboard?</label>
                     <input data-ng-model="user.settings.passedDaysToShow"
-                           data-ng-change="updatePassedDaysToShow(user.settings.passedDaysToShow)" type="number" min="0"
+                           data-ng-blur="updatePassedDaysToShow(user.settings.passedDaysToShow)" type="number" min="0"
                            class="form-control" id="lastDays">
                 </div>
                 <div class="checkbox">
