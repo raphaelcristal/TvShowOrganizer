@@ -21,7 +21,8 @@ public class Application extends Controller {
 
     public static Result index() {
 
-        return ok(index.render());
+        boolean isLoggedIn = session().get("token") != null;
+        return ok(index.render(isLoggedIn));
 
     }
 

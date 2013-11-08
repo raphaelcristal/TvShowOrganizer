@@ -1,3 +1,4 @@
+@(isLoggedIn: Boolean)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -28,12 +29,22 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li data-ng-class="selectedClass('api')"><a href="#/api">API</a></li>
-                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('dashboard')"><a href="#/dashboard">Dashboard</a></li>
-                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('subscriptions')"><a href="#/subscriptions">Subscriptions</a></li>
-                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('shows')"><a href="#/shows">Shows</a></li>
-                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('settings')"><a href="#/settings">Settings</a></li>
+                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('dashboard')" style="@(if(isLoggedIn) {
+                            "display: none"
+                        })"><a href="#/dashboard">Dashboard</a></li>
+                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('subscriptions')" style="@(if(isLoggedIn) {
+                            "display: none"
+                        })"><a href="#/subscriptions">Subscriptions</a></li>
+                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('shows')" style="@(if(isLoggedIn) {
+                            "display: none"
+                        })"><a href="#/shows">Shows</a></li>
+                        <li data-ng-show="isLoggedIn()" data-ng-class="selectedClass('settings')" style="@(if(isLoggedIn) {
+                            "display: none"
+                        })"><a href="#/settings">Settings</a></li>
                     </ul>
-                    <form data-ng-hide="isLoggedIn()" ng-submit="logIn(user.email, user.password)" class="navbar-form navbar-right">
+                    <form data-ng-hide="isLoggedIn()" ng-submit="logIn(user.email, user.password)" class="navbar-form navbar-right" style="@(if(!isLoggedIn) {
+                        "display: none"
+                    })">
                         <div class="form-group">
                             <input data-ng-model="user.email" type="email" placeholder="Email" class="form-control" required>
                         </div>
@@ -42,7 +53,9 @@
                         </div>
                         <button type="submit" class="btn btn-success">Sign in</button>
                     </form>
-                    <form data-ng-show="isLoggedIn()" class="navbar-form navbar-right">
+                    <form data-ng-show="isLoggedIn()" class="navbar-form navbar-right" style="@(if(isLoggedIn) {
+                        "display: none"
+                    })">
                         <button data-ng-click="logOut()" class="btn btn-danger pull-right">Log out</button>
                     </form>
                 </div> <!--/.navbar-collapse -->
