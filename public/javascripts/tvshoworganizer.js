@@ -14,10 +14,10 @@ angular
                 templateUrl: 'assets/partials/dashboard.html',
                 controller: 'DashboardCtrl',
                 resolve: {
-                    latestEpisodesRequest: function ($http, User) {
+                    latestEpisodesRequest: ['$http', 'User', function ($http, User) {
                         return $http.get('/users/' + User.getUserId() + '/latestEpisodes',
                             {params: {days: User.getUser().settings.passedDaysToShow}});
-                    }
+                    }]
                 }
             })
             .when('/subscriptions', {
@@ -32,27 +32,27 @@ angular
                 templateUrl: 'assets/partials/showDetails.html',
                 controller: 'ShowDetailsCtrl',
                 resolve: {
-                    showRequest: function ($http, $route) {
+                    showRequest: ['$http', '$route', function ($http, $route) {
                         return $http.get('/shows/' + $route.current.params.id);
-                    }
+                    }]
                 }
             })
             .when('/actors/:id', {
                 templateUrl: 'assets/partials/actor.html',
                 controller: 'ActorCtrl',
                 resolve: {
-                    actorRequest: function ($http, $route) {
+                    actorRequest: ['$http', '$route', function ($http, $route) {
                         return $http.get('/actors/' + $route.current.params.id + '/shows');
-                    }
+                    }]
                 }
             })
             .when('/networks/:id', {
                 templateUrl: 'assets/partials/network.html',
                 controller: 'NetworkCtrl',
                 resolve: {
-                    networkRequest: function ($http, $route) {
+                    networkRequest: ['$http', '$route', function ($http, $route) {
                         return $http.get('/networks/' + $route.current.params.id + '/shows');
-                    }
+                    }]
                 }
             })
             .when('/settings', {
@@ -65,32 +65,34 @@ angular
     })
     .config(function ($httpProvider) {
 
-        var logoutOnAccessForbidden = function ($location, $q, User, FlashMessenger) {
+        var logoutOnAccessForbidden = ['$location', '$q', 'User', 'FlashMessenger',
 
-            var success = function (response) {
-                if (!User.isLoggedIn() && $location.path() !== '/' && $location.path() !== '/api') {
-                    $location.path('/');
-                    return $q.reject(response);
-                }
-                if (response.data.error) {
+            function ($location, $q, User, FlashMessenger) {
+
+                var success = function (response) {
+                    if (!User.isLoggedIn() && $location.path() !== '/' && $location.path() !== '/api') {
+                        $location.path('/');
+                        return $q.reject(response);
+                    }
+                    if (response.data.error) {
+                        FlashMessenger.showErrorMessage(response.data.error || 'Something went wrong.');
+                    }
+                    return response;
+                };
+
+                var error = function (response) {
+                    if (response.status === 401) {
+                        User.logOut();
+                        $location.path('/');
+                    }
                     FlashMessenger.showErrorMessage(response.data.error || 'Something went wrong.');
-                }
-                return response;
-            };
+                    return $q.reject(response);
+                };
 
-            var error = function (response) {
-                if (response.status === 401) {
-                    User.logOut();
-                    $location.path('/');
-                }
-                FlashMessenger.showErrorMessage(response.data.error || 'Something went wrong.');
-                return $q.reject(response);
-            };
-
-            return function (promise) {
-                return promise.then(success, error);
-            };
-        };
+                return function (promise) {
+                    return promise.then(success, error);
+                };
+            }];
 
         return $httpProvider.responseInterceptors.push(logoutOnAccessForbidden);
     })
@@ -206,281 +208,299 @@ angular
             }
         };
     })
-    .controller('SignUpCtrl', function ($scope, $http, $location, User) {
+    .controller('SignUpCtrl', ['$scope', '$http', '$location', 'User',
 
-        $scope.isLoggedIn = User.isLoggedIn;
+        function ($scope, $http, $location, User) {
 
-        $scope.error = '';
+            $scope.isLoggedIn = User.isLoggedIn;
 
-        $scope.signUp = function (email, password) {
+            $scope.error = '';
 
-            $http({
-                url: '/users',
-                method: 'POST',
-                params: {email: email, password: password}
-            })
-                .success(function (data) {
-                    if (!data.error) {
-                        User.logIn(data);
-                        $location.path('/dashboard');
-                    }
+            $scope.signUp = function (email, password) {
+
+                $http({
+                    url: '/users',
+                    method: 'POST',
+                    params: {email: email, password: password}
                 })
-        };
-    })
-    .controller('TopbarCtrl', function ($scope, $location, $http, User) {
+                    .success(function (data) {
+                        if (!data.error) {
+                            User.logIn(data);
+                            $location.path('/dashboard');
+                        }
+                    })
+            };
+        }])
+    .controller('TopbarCtrl', ['$scope', '$location', '$http', 'User',
 
-        $scope.isLoggedIn = User.isLoggedIn;
+        function ($scope, $location, $http, User) {
 
-        $scope.logIn = function (email, password) {
+            $scope.isLoggedIn = User.isLoggedIn;
 
-            $http({
-                url: '/users/authtoken',
-                method: 'GET',
-                params: {
-                    email: email,
-                    password: password
+            $scope.logIn = function (email, password) {
+
+                $http({
+                    url: '/users/authtoken',
+                    method: 'GET',
+                    params: {
+                        email: email,
+                        password: password
+                    }
+
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.logIn(data);
+                            $location.path('/dashboard');
+                        }
+                    })
+            };
+
+            $scope.logOut = function () {
+
+                $http.get('/users/logOut').success(function () {
+                    $location.path('/');
+                    User.logOut();
+                });
+
+            };
+
+            $scope.selectedClass = function (partial) {
+
+                var currentPartial = $location.path().substring(1);
+                return partial === currentPartial ? 'active' : '';
+
+            };
+        }])
+    .controller('DashboardCtrl', ['$scope', 'User', 'latestEpisodesRequest',
+
+        function ($scope, User, latestEpisodesRequest) {
+
+            $scope.hasRun = function (episode) {
+                return new Date(episode.airtime) < new Date();
+            }
+
+            $scope.latestEpisodes = latestEpisodesRequest.data;
+
+            $scope.userShows = User.getShows;
+
+            $scope.settings = User.getUser().settings;
+
+        }])
+    .controller('SubscriptionCtrl', ['$scope', '$location', '$http', 'User',
+
+        function ($scope, $location, $http, User) {
+
+            $scope.shows = User.getShows;
+
+            $scope.showDetails = function (id) {
+                $location.path('/shows/' + id);
+            };
+
+            $scope.unSubscribe = function (showId) {
+                $http({
+                    url: '/users/' + User.getUserId() + '/shows/' + showId,
+                    method: 'DELETE'
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.removeShow(showId);
+                        }
+                    })
+            };
+        }])
+    .controller('ShowsCtrl', ['$scope', '$location', '$http', 'User',
+
+        function ($scope, $location, $http, User) {
+
+            $scope.searchedShows = [];
+            $scope.searchedShowsTvdb = [];
+            $scope.info = '';
+            $scope.isSearching = false;
+            $scope.showTvdbInformation = false;
+
+            $scope.searchShowOnTvdb = function (query) {
+                $scope.showTvdbInformation = false;
+                $http
+                    .get('/shows/search/tvdb', {params: {title: query}})
+                    .success(function (shows) {
+                        $scope.isSearching = false;
+                        if (shows.length > 0) {
+                            $scope.searchedShowsTvdb = shows;
+                        } else {
+                            $scope.searchedShowsTvdb = [];
+                            $scope.info = 'Sorry we couldn\' find anything for your search.';
+                        }
+                    });
+            };
+
+            $scope.searchShowsByName = function (query) {
+                $scope.isSearching = true;
+                $http
+                    .get('/shows/search', {params: {title: query}})
+                    .success(function (shows) {
+                        if (shows.length > 0) {
+                            $scope.isSearching = false;
+                            $scope.showTvdbInformation = true;
+                            $scope.searchedShowsTvdb = [];
+                            $scope.searchedShows = shows;
+                            $scope.info = '';
+                        } else {
+                            $scope.searchedShows = [];
+                            $scope.searchShowOnTvdb(query);
+                        }
+                    });
+            };
+
+            $scope.importShow = function (show) {
+                show.isSubscribing = true;
+                $http({
+                    url: '/shows',
+                    method: 'POST',
+                    params: {tvdbId: show.seriesid}
+                }).success(function (data) {
+                        show.isSubscribing = false;
+                        if (!data.error) {
+                            show.isSubscribed = true;
+                            $scope.subscribe(data.id);
+                        }
+                    })
+            }
+
+            $scope.subscribe = function (id) {
+                $http({
+                    url: '/users/' + User.getUserId() + '/shows/' + id,
+                    method: 'PUT'
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.addShow(data);
+                        }
+                    })
+            };
+
+            $scope.isSubscribed = User.isSubscribed;
+
+            $scope.showDetails = function (id) {
+                $location.path('/shows/' + id);
+            };
+        }])
+    .controller('ShowDetailsCtrl', ['$scope', '$http', '$location', 'User', 'showRequest',
+
+        function ($scope, $http, $location, User, showRequest) {
+
+            $scope.show = showRequest.data;
+
+            $scope.subscribe = function (id) {
+                $http({
+                    url: '/users/' + User.getUserId() + '/shows/' + id,
+                    method: 'PUT'
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.addShow(data);
+                        }
+                    })
+            };
+
+            $scope.unSubscribe = function (showId) {
+                $http({
+                    url: '/users/' + User.getUserId() + '/shows/' + showId,
+                    method: 'DELETE'
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.removeShow(showId);
+                        }
+                    })
+            };
+
+            $scope.isSubscribed = User.isSubscribed;
+        }])
+    .controller('ActorCtrl', ['$scope', '$http', '$location', '$route', 'actorRequest',
+
+        function ($scope, $http, $location, $route, actorRequest) {
+
+            $scope.shows = actorRequest.data;
+
+            var url = '/actor/' + $route.current.params.id;
+            $http.get(url).success(function (actor) {
+                if (!actor.error) {
+                    $scope.actorName = actor.name;
                 }
-
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.logIn(data);
-                        $location.path('/dashboard');
-                    }
-                })
-        };
-
-        $scope.logOut = function () {
-
-            $http.get('/users/logOut').success(function () {
-                $location.path('/');
-                User.logOut();
             });
 
-        };
+            $scope.showDetails = function (id) {
+                $location.path('/shows/' + id);
+            };
+        }])
+    .controller('NetworkCtrl', ['$scope', '$http', '$location', '$route', 'networkRequest',
 
-        $scope.selectedClass = function (partial) {
+        function ($scope, $http, $location, $route, networkRequest) {
 
-            var currentPartial = $location.path().substring(1);
-            return partial === currentPartial ? 'active' : '';
+            $scope.shows = networkRequest.data;
 
-        };
-    })
-    .controller('DashboardCtrl', function ($scope, User, latestEpisodesRequest) {
-
-        $scope.hasRun = function (episode) {
-            return new Date(episode.airtime) < new Date();
-        }
-
-        $scope.latestEpisodes = latestEpisodesRequest.data;
-
-        $scope.userShows = User.getShows;
-
-        $scope.settings = User.getUser().settings;
-
-    })
-    .controller('SubscriptionCtrl', function ($scope, $location, $http, User) {
-
-        $scope.shows = User.getShows;
-
-        $scope.showDetails = function (id) {
-            $location.path('/shows/' + id);
-        };
-
-        $scope.unSubscribe = function (showId) {
-            $http({
-                url: '/users/' + User.getUserId() + '/shows/' + showId,
-                method: 'DELETE'
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.removeShow(showId);
-                    }
-                })
-        };
-    })
-    .controller('ShowsCtrl', function ($scope, $location, $http, User) {
-
-        $scope.searchedShows = [];
-        $scope.searchedShowsTvdb = [];
-        $scope.info = '';
-        $scope.isSearching = false;
-        $scope.showTvdbInformation = false;
-
-        $scope.searchShowOnTvdb = function (query) {
-            $scope.showTvdbInformation = false;
-            $http
-                .get('/shows/search/tvdb', {params: {title: query}})
-                .success(function (shows) {
-                    $scope.isSearching = false;
-                    if (shows.length > 0) {
-                        $scope.searchedShowsTvdb = shows;
-                    } else {
-                        $scope.searchedShowsTvdb = [];
-                        $scope.info = 'Sorry we couldn\' find anything for your search.';
-                    }
-                });
-        };
-
-        $scope.searchShowsByName = function (query) {
-            $scope.isSearching = true;
-            $http
-                .get('/shows/search', {params: {title: query}})
-                .success(function (shows) {
-                    if (shows.length > 0) {
-                        $scope.isSearching = false;
-                        $scope.showTvdbInformation = true;
-                        $scope.searchedShowsTvdb = [];
-                        $scope.searchedShows = shows;
-                        $scope.info = '';
-                    } else {
-                        $scope.searchedShows = [];
-                        $scope.searchShowOnTvdb(query);
-                    }
-                });
-        };
-
-        $scope.importShow = function (show) {
-            show.isSubscribing = true;
-            $http({
-                url: '/shows',
-                method: 'POST',
-                params: {tvdbId: show.seriesid}
-            }).success(function (data) {
-                    show.isSubscribing = false;
-                    if (!data.error) {
-                        show.isSubscribed = true;
-                        $scope.subscribe(data.id);
-                    }
-                })
-        }
-
-        $scope.subscribe = function (id) {
-            $http({
-                url: '/users/' + User.getUserId() + '/shows/' + id,
-                method: 'PUT'
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.addShow(data);
-                    }
-                })
-        };
-
-        $scope.isSubscribed = User.isSubscribed;
-
-        $scope.showDetails = function (id) {
-            $location.path('/shows/' + id);
-        };
-    })
-    .controller('ShowDetailsCtrl', function ($scope, $http, $location, User, showRequest) {
-
-        $scope.show = showRequest.data;
-
-        $scope.subscribe = function (id) {
-            $http({
-                url: '/users/' + User.getUserId() + '/shows/' + id,
-                method: 'PUT'
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.addShow(data);
-                    }
-                })
-        };
-
-        $scope.unSubscribe = function (showId) {
-            $http({
-                url: '/users/' + User.getUserId() + '/shows/' + showId,
-                method: 'DELETE'
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.removeShow(showId);
-                    }
-                })
-        };
-
-        $scope.isSubscribed = User.isSubscribed;
-    })
-    .controller('ActorCtrl', function ($scope, $http, $location, $route, actorRequest) {
-
-        $scope.shows = actorRequest.data;
-
-        var url = '/actor/' + $route.current.params.id;
-        $http.get(url).success(function (actor) {
-            if (!actor.error) {
-                $scope.actorName = actor.name;
-            }
-        });
-
-        $scope.showDetails = function (id) {
-            $location.path('/shows/' + id);
-        };
-    })
-    .controller('NetworkCtrl', function ($scope, $http, $location, $route, networkRequest) {
-
-        $scope.shows = networkRequest.data;
-
-        var url = '/network/' + $route.current.params.id;
-        $http.get(url).success(function (network) {
-            if (!network.error) {
-                $scope.networkName = network.name;
-            }
-        });
-
-        $scope.showDetails = function (id) {
-            $location.path('/shows/' + id);
-        };
-    })
-    .controller('SettingsCtrl', function ($scope, $http, User, FlashMessenger) {
-
-        $scope.user = User.getUser();
-
-        $scope.updateHideDescriptionsSetting = function (hideDescriptions) {
-            $http({
-                url: '/users/' + User.getUserId() + '/settings/hideDescriptions',
-                method: 'PUT',
-                params: {
-                    hideShowDescriptions: hideDescriptions
+            var url = '/network/' + $route.current.params.id;
+            $http.get(url).success(function (network) {
+                if (!network.error) {
+                    $scope.networkName = network.name;
                 }
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.updateHideDescriptionSetting(hideDescriptions);
-                        FlashMessenger.showSuccessMessage('Your settings have been updated.');
-                    }
-                })
-        };
+            });
 
-        $scope.updatePassedDaysToShow = function (passedDaysToShow) {
-            $http({
-                url: '/users/' + User.getUserId() + '/settings/passedDaysToShow',
-                method: 'PUT',
-                params: {
-                    days: passedDaysToShow
+            $scope.showDetails = function (id) {
+                $location.path('/shows/' + id);
+            };
+        }])
+    .controller('SettingsCtrl', ['$scope', '$http', 'User', 'FlashMessenger',
+
+        function ($scope, $http, User, FlashMessenger) {
+
+            $scope.user = User.getUser();
+
+            $scope.updateHideDescriptionsSetting = function (hideDescriptions) {
+                $http({
+                    url: '/users/' + User.getUserId() + '/settings/hideDescriptions',
+                    method: 'PUT',
+                    params: {
+                        hideShowDescriptions: hideDescriptions
+                    }
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.updateHideDescriptionSetting(hideDescriptions);
+                            FlashMessenger.showSuccessMessage('Your settings have been updated.');
+                        }
+                    })
+            };
+
+            $scope.updatePassedDaysToShow = function (passedDaysToShow) {
+                $http({
+                    url: '/users/' + User.getUserId() + '/settings/passedDaysToShow',
+                    method: 'PUT',
+                    params: {
+                        days: passedDaysToShow
+                    }
+                }).success(function (data) {
+                        if (!data.error) {
+                            User.updatePassedDaysToShow(passedDaysToShow);
+                            FlashMessenger.showSuccessMessage('Your settings have been updated.');
+                        }
+                    })
+            };
+
+            $scope.updateProfile = function (oldPassword, newPassword, newPasswordRepeated) {
+
+                if (newPassword !== newPasswordRepeated) {
+                    FlashMessenger.showErrorMessage('Your passwords do not match.');
+                    return;
                 }
-            }).success(function (data) {
-                    if (!data.error) {
-                        User.updatePassedDaysToShow(passedDaysToShow);
-                        FlashMessenger.showSuccessMessage('Your settings have been updated.');
+
+                $http({
+                    url: '/users/' + User.getUserId() + '/password',
+                    method: 'PUT',
+                    params: {
+                        oldPassword: oldPassword,
+                        newPassword: newPassword
                     }
-                })
-        };
+                }).success(function (data) {
+                        if (!data.error) {
+                            FlashMessenger.showSuccessMessage('Your password has been changed.');
+                        }
+                    })
 
-        $scope.updateProfile = function (oldPassword, newPassword, newPasswordRepeated) {
-
-            if (newPassword !== newPasswordRepeated) {
-                FlashMessenger.showErrorMessage('Your passwords do not match.');
-                return;
-            }
-
-            $http({
-                url: '/users/' + User.getUserId() + '/password',
-                method: 'PUT',
-                params: {
-                    oldPassword: oldPassword,
-                    newPassword: newPassword
-                }
-            }).success(function (data) {
-                    if (!data.error) {
-                        FlashMessenger.showSuccessMessage('Your password has been changed.');
-                    }
-                })
-
-        };
-    })
+            };
+        }])
