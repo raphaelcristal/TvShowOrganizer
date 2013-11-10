@@ -778,4 +778,47 @@ public class Test_Routes_User {
 
     }
 
+    @Test
+    public void getUserByToken() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                TestData.insertData();
+
+                User user = User.find.byId(1L);
+                user = getAuthenticatedUser(user);
+
+                Result result = routeAndCall(fakeRequest(GET, "/users?token=" + user.getAuthToken().getToken()));
+                assertThat(status(result)).isEqualTo(OK);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("id").asLong()).isEqualTo(1L);
+
+            }
+        });
+
+    }
+
+    @Test
+    public void getUserByNonExistingToken() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                Result result = routeAndCall(fakeRequest(GET, "/users?token=WRONGTOKEN"));
+                assertThat(status(result)).isEqualTo(OK);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("error").asText()).isEqualTo("User does not exist.");
+
+            }
+        });
+
+    }
+
 }

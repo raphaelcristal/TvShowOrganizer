@@ -313,5 +313,15 @@ public class Users extends Controller {
     }
 
 
+    public static Result getUserByToken(String token) {
+
+        User user = User.find.where().eq("authToken.token", token).findUnique();
+
+        if (user == null) {
+            return ok(JsonErrorMessage("User does not exist."));
+        }
+
+        return ok(toJson(user));
+    }
 }
 
