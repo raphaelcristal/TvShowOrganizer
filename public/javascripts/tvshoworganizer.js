@@ -1,7 +1,7 @@
 'use strict';
 angular
     .module('tvshoworganizer', [])
-    .config(function ($routeProvider) {
+    .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/', {
                 templateUrl: 'assets/partials/landingpage.html',
@@ -62,8 +62,8 @@ angular
             .otherwise({
                 redirectTo: '/'
             })
-    })
-    .config(function ($httpProvider) {
+    }])
+    .config(['$httpProvider', function ($httpProvider) {
 
         var logoutOnAccessForbidden = ['$location', '$q', 'User', 'FlashMessenger',
 
@@ -95,7 +95,7 @@ angular
             }];
 
         return $httpProvider.responseInterceptors.push(logoutOnAccessForbidden);
-    })
+    }])
     .directive('ngEnter', function () {
         return function (scope, element, attrs) {
             element.bind("keydown keypress", function (event) {
