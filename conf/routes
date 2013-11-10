@@ -7,8 +7,9 @@ GET           /                                                                 
 GET           /setup                                                              controllers.Application.setUp(fromFilesOnly: Boolean ?= true)
 GET           /update                                                             controllers.Application.update()
 
+#frontend specific
+GET           /userBySession                                                      controllers.Users.getUserBySession()
 # Users
-GET           /users                                                              controllers.Users.getUserByToken(token: String)
 GET           /users/logOut                                                       controllers.Users.destroySession()
 GET           /users/:userId/shows                                                controllers.Users.getShows(userId: Long)
 GET           /users/:userId/latestEpisodes                                       controllers.Users.latestEpisodes(userId: Long, days: Int ?= 7)

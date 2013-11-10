@@ -313,12 +313,17 @@ public class Users extends Controller {
     }
 
 
-    public static Result getUserByToken(String token) {
+    public static Result getUserBySession() {
+
+        String token = session().get("token");
+
+        if (token == null) {
+            return badRequest(JsonErrorMessage("User does not have a session."));
+        }
 
         User user = User.find.where().eq("authToken.token", token).findUnique();
-
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("Token does not exist."));
         }
 
         return ok(toJson(user));

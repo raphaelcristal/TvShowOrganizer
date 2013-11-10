@@ -779,7 +779,7 @@ public class Test_Routes_User {
     }
 
     @Test
-    public void getUserByToken() {
+    public void getUserBySession() {
 
         running(fakeApplication(inMemoryDatabase()), new Runnable() {
 
@@ -790,7 +790,7 @@ public class Test_Routes_User {
                 User user = User.find.byId(1L);
                 user = getAuthenticatedUser(user);
 
-                Result result = routeAndCall(fakeRequest(GET, "/users?token=" + user.getAuthToken().getToken()));
+                Result result = routeAndCall(fakeRequest(GET, "/userBySession").withSession("token", user.getAuthToken().getToken()));
                 assertThat(status(result)).isEqualTo(OK);
 
                 JsonNode json = Json.parse(contentAsString(result));
@@ -803,18 +803,37 @@ public class Test_Routes_User {
     }
 
     @Test
-    public void getUserByNonExistingToken() {
+    public void getUserBySessionWithNonExistingToken() {
 
         running(fakeApplication(inMemoryDatabase()), new Runnable() {
 
             public void run() {
 
-                Result result = routeAndCall(fakeRequest(GET, "/users?token=WRONGTOKEN"));
-                assertThat(status(result)).isEqualTo(OK);
+                Result result = routeAndCall(fakeRequest(GET, "/userBySession").withSession("token", "WRONGTOKEN"));
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
-                assertThat(json.get("error").asText()).isEqualTo("User does not exist.");
+                assertThat(json.get("error").asText()).isEqualTo("Token does not exist.");
+
+            }
+        });
+
+    }
+
+    @Test
+    public void getUserBySessionWithEmptySession() {
+
+        running(fakeApplication(inMemoryDatabase()), new Runnable() {
+
+            public void run() {
+
+                Result result = routeAndCall(fakeRequest(GET, "/userBySession"));
+                assertThat(status(result)).isEqualTo(BAD_REQUEST);
+
+                JsonNode json = Json.parse(contentAsString(result));
+
+                assertThat(json.get("error").asText()).isEqualTo("User does not have a session.");
 
             }
         });
