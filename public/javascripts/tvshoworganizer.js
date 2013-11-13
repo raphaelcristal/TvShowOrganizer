@@ -177,14 +177,16 @@ angular
                 return user ? user.shows : [];
             },
             isSubscribed: function (showId) {
-                return !!_.find(user.shows, {id: showId});
+                return user.shows.filter(function (show) {
+                    return show.id === showId;
+                }).length > 0;
             },
             addShow: function (show) {
                 user.shows.push(show);
             },
             removeShow: function (showId) {
-                user.shows = _.reject(user.shows, function (show) {
-                    return show.id === showId;
+                user.shows = user.shows.filter(function (show) {
+                    return show.id !== showId;
                 });
             },
             updateHideDescriptionSetting: function (hide) {
