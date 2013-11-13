@@ -14,9 +14,9 @@ angular
                 templateUrl: 'assets/partials/dashboard.html',
                 controller: 'DashboardCtrl',
                 resolve: {
-                    latestEpisodesRequest: ['$http', 'User', function ($http, User) {
-                        return $http.get('/users/' + User.getUserId() + '/latestEpisodes',
-                            {params: {days: User.getUser().settings.passedDaysToShow}});
+                    latestEpisodesRequest: ['$http', 'UserService', function ($http, UserService) {
+                        return $http.get('/users/' + UserService.getUser().id + '/latestEpisodes',
+                            {params: {days: UserService.getUser().settings.passedDaysToShow}});
                     }]
                 }
             })
@@ -65,12 +65,12 @@ angular
     }])
     .config(['$httpProvider', function ($httpProvider) {
 
-        var logoutOnAccessForbidden = ['$location', '$q', 'User', 'FlashMessenger',
+        var logoutOnAccessForbidden = ['$location', '$q', 'UserService', 'FlashMessenger',
 
-            function ($location, $q, User, FlashMessenger) {
+            function ($location, $q, UserService, FlashMessenger) {
 
                 var success = function (response) {
-                    if (!User.isLoggedIn() && $location.path() !== '/' && $location.path() !== '/api') {
+                    if (!UserService.isLoggedIn() && $location.path() !== '/' && $location.path() !== '/api') {
                         $location.path('/');
                         return $q.reject(response);
                     }
@@ -82,7 +82,7 @@ angular
 
                 var error = function (response) {
                     if (response.status === 401) {
-                        User.logOut();
+                        UserService.logOut();
                         $location.path('/');
                     }
                     FlashMessenger.showErrorMessage(response.data.error || 'Something went wrong.');
@@ -156,63 +156,50 @@ angular
         }
 
     })
-    .factory('User', function () {
+    .factory('UserService', function () {
 
-        var storageUser = JSON.parse(localStorage.getItem("user"));
-
-        var save = function () {
-            localStorage.setItem("user", JSON.stringify(storageUser));
-        };
+        var user = JSON.parse(document.querySelector('#user').textContent);
 
         return {
-            isLoggedIn: function () {
-                return !!storageUser;
+            getUser: function () {
+                return user;
             },
-            logIn: function (user) {
-                storageUser = user;
-                save();
+            isLoggedIn: function () {
+                return !!user;
+            },
+            logIn: function (userData) {
+                user = userData;
             },
             logOut: function () {
-                localStorage.removeItem("user");
-                storageUser = null;
-            },
-            getUserId: function () {
-                return storageUser.id;
+                user = null;
             },
             getShows: function () {
-                return storageUser ? storageUser.shows : [];
-            },
-            getUser: function () {
-                return storageUser;
+                return user ? user.shows : [];
             },
             isSubscribed: function (showId) {
-                return !!_.find(storageUser.shows, {id: showId});
+                return !!_.find(user.shows, {id: showId});
             },
             addShow: function (show) {
-                storageUser.shows.push(show);
-                save();
+                user.shows.push(show);
             },
             removeShow: function (showId) {
-                storageUser.shows = _.reject(storageUser.shows, function (show) {
+                user.shows = _.reject(user.shows, function (show) {
                     return show.id === showId;
                 });
-                save();
             },
             updateHideDescriptionSetting: function (hide) {
-                storageUser.settings.hideDescriptions = hide;
-                save();
+                user.settings.hideDescriptions = hide;
             },
             updatePassedDaysToShow: function (passedDaysToShow) {
-                storageUser.settings.passedDaysToShow = passedDaysToShow;
-                save();
+                user.settings.passedDaysToShow = passedDaysToShow;
             }
         };
     })
-    .controller('SignUpCtrl', ['$scope', '$http', '$location', 'User',
+    .controller('SignUpCtrl', ['$scope', '$http', '$location', 'UserService',
 
-        function ($scope, $http, $location, User) {
+        function ($scope, $http, $location, UserService) {
 
-            $scope.isLoggedIn = User.isLoggedIn;
+            $scope.isLoggedIn = UserService.isLoggedIn;
 
             $scope.error = '';
 
@@ -225,17 +212,17 @@ angular
                 })
                     .success(function (data) {
                         if (!data.error) {
-                            User.logIn(data);
+                            UserService.logIn(data);
                             $location.path('/dashboard');
                         }
                     })
             };
         }])
-    .controller('TopbarCtrl', ['$scope', '$location', '$http', 'User',
+    .controller('TopbarCtrl', ['$scope', '$location', '$http', 'UserService',
 
-        function ($scope, $location, $http, User) {
+        function ($scope, $location, $http, UserService) {
 
-            $scope.isLoggedIn = User.isLoggedIn;
+            $scope.isLoggedIn = UserService.isLoggedIn;
 
             $scope.logIn = function (email, password) {
 
@@ -249,7 +236,7 @@ angular
 
                 }).success(function (data) {
                         if (!data.error) {
-                            User.logIn(data);
+                            UserService.logIn(data);
                             $location.path('/dashboard');
                         }
                     })
@@ -259,7 +246,7 @@ angular
 
                 $http.get('/users/logOut').success(function () {
                     $location.path('/');
-                    User.logOut();
+                    UserService.logOut();
                 });
 
             };
@@ -271,9 +258,9 @@ angular
 
             };
         }])
-    .controller('DashboardCtrl', ['$scope', 'User', 'latestEpisodesRequest',
+    .controller('DashboardCtrl', ['$scope', 'UserService', 'latestEpisodesRequest',
 
-        function ($scope, User, latestEpisodesRequest) {
+        function ($scope, UserService, latestEpisodesRequest) {
 
             $scope.hasRun = function (episode) {
                 return new Date(episode.airtime) < new Date();
@@ -281,16 +268,16 @@ angular
 
             $scope.latestEpisodes = latestEpisodesRequest.data;
 
-            $scope.userShows = User.getShows;
+            $scope.userShows = UserService.getShows;
 
-            $scope.settings = User.getUser().settings;
+            $scope.settings = UserService.getUser().settings;
 
         }])
-    .controller('SubscriptionCtrl', ['$scope', '$location', '$http', 'User',
+    .controller('SubscriptionCtrl', ['$scope', '$location', '$http', 'UserService',
 
-        function ($scope, $location, $http, User) {
+        function ($scope, $location, $http, UserService) {
 
-            $scope.shows = User.getShows;
+            $scope.shows = UserService.getShows;
 
             $scope.showDetails = function (id) {
                 $location.path('/shows/' + id);
@@ -298,18 +285,18 @@ angular
 
             $scope.unSubscribe = function (showId) {
                 $http({
-                    url: '/users/' + User.getUserId() + '/shows/' + showId,
+                    url: '/users/' + UserService.getUser().id + '/shows/' + showId,
                     method: 'DELETE'
                 }).success(function (data) {
                         if (!data.error) {
-                            User.removeShow(showId);
+                            UserService.removeShow(showId);
                         }
                     })
             };
         }])
-    .controller('ShowsCtrl', ['$scope', '$location', '$http', 'User',
+    .controller('ShowsCtrl', ['$scope', '$location', '$http', 'UserService',
 
-        function ($scope, $location, $http, User) {
+        function ($scope, $location, $http, UserService) {
 
             $scope.searchedShows = [];
             $scope.searchedShowsTvdb = [];
@@ -367,50 +354,50 @@ angular
 
             $scope.subscribe = function (id) {
                 $http({
-                    url: '/users/' + User.getUserId() + '/shows/' + id,
+                    url: '/users/' + UserService.getUser().id + '/shows/' + id,
                     method: 'PUT'
                 }).success(function (data) {
                         if (!data.error) {
-                            User.addShow(data);
+                            UserService.addShow(data);
                         }
                     })
             };
 
-            $scope.isSubscribed = User.isSubscribed;
+            $scope.isSubscribed = UserService.isSubscribed;
 
             $scope.showDetails = function (id) {
                 $location.path('/shows/' + id);
             };
         }])
-    .controller('ShowDetailsCtrl', ['$scope', '$http', '$location', 'User', 'showRequest',
+    .controller('ShowDetailsCtrl', ['$scope', '$http', '$location', 'UserService', 'showRequest',
 
-        function ($scope, $http, $location, User, showRequest) {
+        function ($scope, $http, $location, UserService, showRequest) {
 
             $scope.show = showRequest.data;
 
             $scope.subscribe = function (id) {
                 $http({
-                    url: '/users/' + User.getUserId() + '/shows/' + id,
+                    url: '/users/' + UserService.getUser().id + '/shows/' + id,
                     method: 'PUT'
                 }).success(function (data) {
                         if (!data.error) {
-                            User.addShow(data);
+                            UserService.addShow(data);
                         }
                     })
             };
 
             $scope.unSubscribe = function (showId) {
                 $http({
-                    url: '/users/' + User.getUserId() + '/shows/' + showId,
+                    url: '/users/' + UserService.getUser().id + '/shows/' + showId,
                     method: 'DELETE'
                 }).success(function (data) {
                         if (!data.error) {
-                            User.removeShow(showId);
+                            UserService.removeShow(showId);
                         }
                     })
             };
 
-            $scope.isSubscribed = User.isSubscribed;
+            $scope.isSubscribed = UserService.isSubscribed;
         }])
     .controller('ActorCtrl', ['$scope', '$http', '$location', '$route', 'actorRequest',
 
@@ -446,22 +433,22 @@ angular
                 $location.path('/shows/' + id);
             };
         }])
-    .controller('SettingsCtrl', ['$scope', '$http', 'User', 'FlashMessenger',
+    .controller('SettingsCtrl', ['$scope', '$http', 'UserService', 'FlashMessenger',
 
-        function ($scope, $http, User, FlashMessenger) {
+        function ($scope, $http, UserService, FlashMessenger) {
 
-            $scope.user = User.getUser();
+            $scope.user = UserService.getUser();
 
             $scope.updateHideDescriptionsSetting = function (hideDescriptions) {
                 $http({
-                    url: '/users/' + User.getUserId() + '/settings/hideDescriptions',
+                    url: '/users/' + UserService.getUser().id + '/settings/hideDescriptions',
                     method: 'PUT',
                     params: {
                         hideShowDescriptions: hideDescriptions
                     }
                 }).success(function (data) {
                         if (!data.error) {
-                            User.updateHideDescriptionSetting(hideDescriptions);
+                            UserService.updateHideDescriptionSetting(hideDescriptions);
                             FlashMessenger.showSuccessMessage('Your settings have been updated.');
                         }
                     })
@@ -469,14 +456,14 @@ angular
 
             $scope.updatePassedDaysToShow = function (passedDaysToShow) {
                 $http({
-                    url: '/users/' + User.getUserId() + '/settings/passedDaysToShow',
+                    url: '/users/' + UserService.getUser().id + '/settings/passedDaysToShow',
                     method: 'PUT',
                     params: {
                         days: passedDaysToShow
                     }
                 }).success(function (data) {
                         if (!data.error) {
-                            User.updatePassedDaysToShow(passedDaysToShow);
+                            UserService.updatePassedDaysToShow(passedDaysToShow);
                             FlashMessenger.showSuccessMessage('Your settings have been updated.');
                         }
                     })
@@ -490,7 +477,7 @@ angular
                 }
 
                 $http({
-                    url: '/users/' + User.getUserId() + '/password',
+                    url: '/users/' + UserService.getUser().id + '/password',
                     method: 'PUT',
                     params: {
                         oldPassword: oldPassword,

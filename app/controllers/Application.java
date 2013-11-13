@@ -6,6 +6,10 @@ import dataload.parsers.ImdbParser;
 import dataload.parsers.TvdbParser;
 import dataload.provider.ImdbProvider;
 import dataload.provider.TvdbProvider;
+import models.JsonViews.ShowWithoutSeasonsNetworkActors;
+import models.Show;
+import models.User;
+import org.codehaus.jackson.map.ObjectMapper;
 import play.Logger;
 import play.Play;
 import play.mvc.Controller;
@@ -21,8 +25,26 @@ public class Application extends Controller {
 
     public static Result index() {
 
-        boolean isLoggedIn = session().get("token") != null;
-        return ok(index.render(isLoggedIn));
+        String token = session().get("token");
+        User user = null;
+
+        if (token != null) {
+            user = User.find.where().eq("authToken.token", token).findUnique();
+        }
+
+        boolean isLoggedIn = user != null;
+
+        //return null if there is no user
+        if (user == null) {
+            return ok(index.render(isLoggedIn, "null"));
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.getSerializationConfig().addMixInAnnotations(Show.class, ShowWithoutSeasonsNetworkActors.class);
+
+        String userJson = mapper.valueToTree(user).toString();
+
+        return ok(index.render(isLoggedIn, userJson));
 
     }
 

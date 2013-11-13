@@ -1,4 +1,4 @@
-@(isLoggedIn: Boolean)
+@(isLoggedIn: Boolean, userJson: String)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/tvshoworganizer.css")">
     </head>
     <body data-ng-app="tvshoworganizer">
+        <div id="user" style="display : none">@userJson</div>
         <div data-ng-controller="TopbarCtrl" class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
