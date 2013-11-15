@@ -45,7 +45,7 @@ public class Test_Routes_Episode {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/100/seasons/2/episodes/4"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -66,7 +66,7 @@ public class Test_Routes_Episode {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/1/seasons/100/episodes/4"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -110,7 +110,7 @@ public class Test_Routes_Episode {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/episodes/100"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -152,7 +152,7 @@ public class Test_Routes_Episode {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/2/seasons/5/episodes"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -173,7 +173,7 @@ public class Test_Routes_Episode {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/100/seasons/1/episodes"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 

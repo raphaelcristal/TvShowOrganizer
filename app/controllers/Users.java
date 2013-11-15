@@ -49,7 +49,7 @@ public class Users extends Controller {
 
         User user = User.find.byId(userId);
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist"));
+            return notFound(JsonErrorMessage("User does not exist"));
         }
 
         if (!isAuthorized(session(), user)) {
@@ -63,7 +63,7 @@ public class Users extends Controller {
     public static Result createUser(String email, String password) {
 
         if (password.length() < 5) {
-            return ok(JsonErrorMessage("Password length has to be at least 5."));
+            return badRequest(JsonErrorMessage("Password length has to be at least 5."));
         }
 
         User user = new User();
@@ -87,7 +87,7 @@ public class Users extends Controller {
 
         } catch (PersistenceException ex) {
 
-            return ok(JsonErrorMessage("User already exists."));
+            return status(409, JsonErrorMessage("User already exists."));
 
         }
 
@@ -100,7 +100,7 @@ public class Users extends Controller {
 
         User user = User.find.where().eq("email", email).findUnique();
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("User does not exist."));
         }
 
         if (!BCrypt.checkpw(password, user.getPassword())) {
@@ -137,7 +137,7 @@ public class Users extends Controller {
 
         User user = User.find.byId(userId);
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist"));
+            return notFound(JsonErrorMessage("User does not exist"));
         }
 
         if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
@@ -145,7 +145,7 @@ public class Users extends Controller {
         }
 
         if (newPassword.length() < 5) {
-            return ok(JsonErrorMessage("Password length has to be at least 5."));
+            return badRequest(JsonErrorMessage("Password length has to be at least 5."));
         }
 
         user.setPassword(newPassword);
@@ -161,7 +161,7 @@ public class Users extends Controller {
 
         User user = User.find.byId(userId);
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("User does not exist."));
         }
 
         if (!isAuthorized(session(), user)) {
@@ -170,7 +170,7 @@ public class Users extends Controller {
 
         Show show = Show.find.byId(showId);
         if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
+            return notFound(JsonErrorMessage("Show does not exist."));
         }
 
         user.getShows().add(show);
@@ -186,7 +186,7 @@ public class Users extends Controller {
 
         User user = User.find.byId(userId);
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("User does not exist."));
         }
 
         if (!isAuthorized(session(), user)) {
@@ -195,7 +195,7 @@ public class Users extends Controller {
 
         Show show = Show.find.byId(showId);
         if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
+            return notFound(JsonErrorMessage("Show does not exist."));
         }
 
         user.getShows().remove(show);
@@ -211,7 +211,7 @@ public class Users extends Controller {
 
         User user = User.find.byId(userId);
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("User does not exist."));
         }
 
         if (!isAuthorized(session(), user)) {
@@ -285,7 +285,7 @@ public class Users extends Controller {
         User user = User.find.byId(userId);
 
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("User does not exist."));
         }
 
         Settings settings = user.getSettings();
@@ -301,7 +301,7 @@ public class Users extends Controller {
         User user = User.find.byId(userId);
 
         if (user == null) {
-            return ok(JsonErrorMessage("User does not exist."));
+            return notFound(JsonErrorMessage("User does not exist."));
         }
 
         Settings settings = user.getSettings();

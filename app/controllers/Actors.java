@@ -35,7 +35,7 @@ public class Actors extends Controller {
         Actor actor = Actor.find.byId(actorId);
 
         if (actor == null) {
-            return ok(JsonErrorMessage("Actor does not exist."));
+            return notFound(JsonErrorMessage("Actor does not exist."));
         }
 
         return ok(toJson(actor));

@@ -234,7 +234,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.createUser(email, password));
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(409);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -274,7 +274,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.createUser("foo@bar.de", ""));
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(BAD_REQUEST);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -318,7 +318,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.authenticateUser("foo@bar.de", "secret"));
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -385,7 +385,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.updatePassword(1L, "Geldspeicher", ""));
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(BAD_REQUEST);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -429,7 +429,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.subscribeUserToShow(100L, 1L));
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -459,7 +459,7 @@ public class Test_Routes_User {
                         fakeRequest().withSession("token", token.getToken())
                 );
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -616,7 +616,7 @@ public class Test_Routes_User {
 
                 Result result = callAction(controllers.routes.ref.Users.unsubscribeUserFromShow(100L, 1L));
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -645,7 +645,7 @@ public class Test_Routes_User {
                         fakeRequest().withSession("token", token.getToken())
                 );
 
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 

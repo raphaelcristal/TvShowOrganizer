@@ -29,23 +29,24 @@ public class Episodes extends Controller {
 
     public static Result getEpisode(Long showId, int seasonNumber, int episodeNumber) {
 
+        //TODO FIX THIS
         Logger.debug("Get episode number " + episodeNumber + " of season number " + seasonNumber + " of show " + showId + "");
 
         Show show = Show.find.byId(showId);
         if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
+            return notFound(JsonErrorMessage("Show does not exist."));
         }
 
         Season season;
         try {
             season = show.getSeasons().get(seasonNumber - 1);
         } catch (IndexOutOfBoundsException e) {
-            return ok(JsonErrorMessage("Season does not exist."));
+            return notFound(JsonErrorMessage("Season does not exist."));
         }
 
         Episode episode = findEpisodeByNumber(season.getEpisodes(), episodeNumber);
         if (episode == null) {
-            return ok(JsonErrorMessage("Episode does not exist."));
+            return notFound(JsonErrorMessage("Episode does not exist."));
         }
 
         return ok(toJson(episode));
@@ -53,18 +54,19 @@ public class Episodes extends Controller {
 
     public static Result getAllEpisodesForShowAndSeason(Long showId, int seasonNumber) {
 
+        //TODO FIX THIS
         Logger.debug("Get all episodes of season number " + seasonNumber + " of show " + showId + "");
 
         Show show = Show.find.byId(showId);
         if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
+            return notFound(JsonErrorMessage("Show does not exist."));
         }
 
         Season season;
         try {
             season = show.getSeasons().get(seasonNumber - 1);
         } catch (IndexOutOfBoundsException e) {
-            return ok(JsonErrorMessage("Season does not exist."));
+            return notFound(JsonErrorMessage("Season does not exist."));
         }
 
         List<Episode> episodes = season.getEpisodes();
@@ -79,7 +81,7 @@ public class Episodes extends Controller {
 
         Episode episode = Episode.find.byId(episodeId);
         if (episode == null) {
-            return ok(JsonErrorMessage("Episode does not exist."));
+            return notFound(JsonErrorMessage("Episode does not exist."));
         }
 
         return ok(toJson(episode));

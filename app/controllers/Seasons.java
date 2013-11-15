@@ -29,7 +29,7 @@ public class Seasons extends Controller {
         Season season = Season.find.where().eq("show_id", showId).eq("number", seasonNumber).findUnique();
 
         if (season == null) {
-            return ok(JsonErrorMessage("Season does not exist."));
+            return notFound(JsonErrorMessage("Season does not exist."));
         }
 
         return ok(toJson(season));
@@ -42,7 +42,7 @@ public class Seasons extends Controller {
 
         Show show = Show.find.byId(showId);
         if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
+            return notFound(JsonErrorMessage("Show does not exist."));
         }
 
         List<Season> seasons = show.getSeasons();

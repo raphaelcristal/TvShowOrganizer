@@ -43,7 +43,7 @@ public class Shows extends Controller {
         Show show = Show.find.byId(showId);
 
         if (show == null) {
-            return ok(JsonErrorMessage("Show does not exist."));
+            return notFound(JsonErrorMessage("Show does not exist."));
         }
 
         return ok(toJson(show));
@@ -83,7 +83,7 @@ public class Shows extends Controller {
         List<Object> ids = Show.find.where().eq("tvdbId", tvdbId).findIds();
 
         if (ids.size() > 0) {
-            return ok(JsonErrorMessage("Show already exists."));
+            return status(409, JsonErrorMessage("Show already exists."));
         }
 
         TvdbProvider tvdbProvider = new TvdbProvider(Play.application().configuration().getString("tvdb.token"));

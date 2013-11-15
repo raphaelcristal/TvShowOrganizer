@@ -34,7 +34,7 @@ public class Networks extends Controller {
         Network network = Network.find.byId(networkId);
 
         if (network == null) {
-            return ok(JsonErrorMessage("Network does not exist."));
+            return notFound(JsonErrorMessage("Network does not exist."));
         }
 
         return ok(toJson(network));

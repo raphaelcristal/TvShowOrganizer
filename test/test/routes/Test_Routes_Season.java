@@ -89,7 +89,7 @@ public class Test_Routes_Season {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/2/seasons/100"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -111,7 +111,7 @@ public class Test_Routes_Season {
                 TestData.insertData();
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/2/seasons/-1"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 

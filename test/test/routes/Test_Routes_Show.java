@@ -62,7 +62,7 @@ public class Test_Routes_Show {
             public void run() {
 
                 Result result = routeAndCall(fakeRequest(GET, "/shows/999"));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(NOT_FOUND);
 
                 JsonNode json = Json.parse(contentAsString(result));
 
@@ -126,7 +126,7 @@ public class Test_Routes_Show {
                 TestData.insertData();
 
                 Result result = callAction(routes.ref.Shows.addShow(1));
-                assertThat(status(result)).isEqualTo(OK);
+                assertThat(status(result)).isEqualTo(409);
 
                 JsonNode json = Json.parse(contentAsString(result));
                 assertThat(json.get("error").getTextValue()).isEqualTo("Show already exists.");
