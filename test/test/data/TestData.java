@@ -288,6 +288,7 @@ public class TestData {
             seasons = new ArrayList<>();
 
             Season seasonWithNoEpisodes = new Season();
+            seasonWithNoEpisodes.setNumber(1);
             seasons.add(seasonWithNoEpisodes);
 
             showWithNoEpisodes.setSeasons(seasons);

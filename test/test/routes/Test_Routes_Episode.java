@@ -49,7 +49,7 @@ public class Test_Routes_Episode {
 
                 JsonNode json = Json.parse(contentAsString(result));
 
-                assertThat(json.get("error").asText()).isEqualTo("Show does not exist.");
+                assertThat(json.get("error").asText()).isEqualTo("Episode does not exist.");
 
             }
         });
@@ -70,7 +70,7 @@ public class Test_Routes_Episode {
 
                 JsonNode json = Json.parse(contentAsString(result));
 
-                assertThat(json.get("error").asText()).isEqualTo("Season does not exist.");
+                assertThat(json.get("error").asText()).isEqualTo("Episode does not exist.");
 
             }
         });
@@ -156,7 +156,7 @@ public class Test_Routes_Episode {
 
                 JsonNode json = Json.parse(contentAsString(result));
 
-                assertThat(json.get("error").asText()).isEqualTo("Season does not exist.");
+                assertThat(json.get("error").asText()).isEqualTo("Episodes do not exist.");
 
             }
         });
@@ -177,7 +177,7 @@ public class Test_Routes_Episode {
 
                 JsonNode json = Json.parse(contentAsString(result));
 
-                assertThat(json.get("error").asText()).isEqualTo("Show does not exist.");
+                assertThat(json.get("error").asText()).isEqualTo("Episodes do not exist.");
 
             }
         });

@@ -2,7 +2,6 @@ package controllers;
 
 import models.Episode;
 import models.Season;
-import models.Show;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -29,19 +28,12 @@ public class Episodes extends Controller {
 
     public static Result getEpisode(Long showId, int seasonNumber, int episodeNumber) {
 
-        //TODO FIX THIS
         Logger.debug("Get episode number " + episodeNumber + " of season number " + seasonNumber + " of show " + showId + "");
 
-        Show show = Show.find.byId(showId);
-        if (show == null) {
-            return notFound(JsonErrorMessage("Show does not exist."));
-        }
+        Season season = Season.find.where().eq("show_id", showId).eq("number", seasonNumber).findUnique();
 
-        Season season;
-        try {
-            season = show.getSeasons().get(seasonNumber - 1);
-        } catch (IndexOutOfBoundsException e) {
-            return notFound(JsonErrorMessage("Season does not exist."));
+        if (season == null) {
+            return notFound(JsonErrorMessage("Episode does not exist."));
         }
 
         Episode episode = findEpisodeByNumber(season.getEpisodes(), episodeNumber);
@@ -54,19 +46,12 @@ public class Episodes extends Controller {
 
     public static Result getAllEpisodesForShowAndSeason(Long showId, int seasonNumber) {
 
-        //TODO FIX THIS
         Logger.debug("Get all episodes of season number " + seasonNumber + " of show " + showId + "");
 
-        Show show = Show.find.byId(showId);
-        if (show == null) {
-            return notFound(JsonErrorMessage("Show does not exist."));
-        }
+        Season season = Season.find.where().eq("show_id", showId).eq("number", seasonNumber).findUnique();
 
-        Season season;
-        try {
-            season = show.getSeasons().get(seasonNumber - 1);
-        } catch (IndexOutOfBoundsException e) {
-            return notFound(JsonErrorMessage("Season does not exist."));
+        if (season == null) {
+            return notFound(JsonErrorMessage("Episodes do not exist."));
         }
 
         List<Episode> episodes = season.getEpisodes();
