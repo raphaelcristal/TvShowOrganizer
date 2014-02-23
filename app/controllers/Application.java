@@ -48,7 +48,7 @@ public class Application extends Controller {
 
     }
 
-    public static Result setUp(boolean fromFilesOnly) {
+    public static Result setUp() {
 
         if (!Http.Context.current().request().remoteAddress().equals("127.0.0.1")) {
             return forbidden();
